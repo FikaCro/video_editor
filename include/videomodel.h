@@ -6,7 +6,6 @@
 #include <opencv2/opencv.hpp>
 struct Video
 {
-  bool editable{false};
   QString path;
   QImage thumbnail;
 };
@@ -15,11 +14,12 @@ class VideoModel : public QAbstractListModel
 {
   Q_OBJECT
 
+  Q_PROPERTY(bool editable READ getEditable WRITE setEditable NOTIFY editableChanged)
+
 public:
   enum Roles
   {
-    EditableRole = Qt::UserRole,
-    PathRole,
+    PathRole = Qt::UserRole,
     ThumbnailRole
   };
 
@@ -30,11 +30,18 @@ public:
   QHash<int, QByteArray> roleNames() const Q_DECL_OVERRIDE;
   int rowCount(const QModelIndex& parent = QModelIndex()) const Q_DECL_OVERRIDE;
 
+  bool getEditable() const;
+  void setEditable(bool value);
+
   Q_INVOKABLE void addVideo(const QString& path);
   void addVideo(const Video& video);
 
 private:
   QList<Video> videos_;
+  bool editable{false};
+
+signals:
+  void editableChanged(bool value);
 };
 
 #endif // VIDEOMODEL_H

@@ -1,20 +1,26 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 
-int main(int argc, char *argv[])
+#include "include/videomodel.h"
+
+int main(int argc, char* argv[])
 {
-    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+  QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
-    QGuiApplication app(argc, argv);
+  QGuiApplication app(argc, argv);
 
-    QQmlApplicationEngine engine;
-    const QUrl url(QStringLiteral("qrc:/main.qml"));
-    QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
-                     &app, [url](QObject *obj, const QUrl &objUrl) {
-        if (!obj && url == objUrl)
-            QCoreApplication::exit(-1);
-    }, Qt::QueuedConnection);
-    engine.load(url);
+  QQmlApplicationEngine engine;
+  const QUrl url(QStringLiteral("qrc:/main.qml"));
+  QObject::connect(&engine, &QQmlApplicationEngine::objectCreated, &app,
+                   [url](QObject* obj, const QUrl& objUrl) {
+                     if (!obj && url == objUrl)
+                       QCoreApplication::exit(-1);
+                   },
+                   Qt::QueuedConnection);
 
-    return app.exec();
+  qmlRegisterType<VideoModel>("VideoModel", 1, 0, "VideoModel");
+
+  engine.load(url);
+
+  return app.exec();
 }

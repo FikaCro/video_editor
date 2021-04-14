@@ -12,7 +12,7 @@ Item {
 
     Button {
         id: button_raw
-        Text {
+        Label {
             text: "Raw videos"
 
             anchors.centerIn: parent
@@ -36,7 +36,7 @@ Item {
 
     Button {
         id: button_edited
-        Text {
+        Label {
             text: "Edited videos"
 
             anchors.centerIn: parent

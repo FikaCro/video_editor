@@ -14,8 +14,6 @@ QVariant VideoModel::data(const QModelIndex& index, int role) const
   }
   switch (role)
   {
-  case EditableRole:
-    return QVariant(videos_.at(index.row()).editable);
   case PathRole:
     return QVariant(videos_.at(index.row()).path);
   case ThumbnailRole:
@@ -36,7 +34,6 @@ bool VideoModel::setData(const QModelIndex& index, const QVariant& value, int ro
 QHash<int, QByteArray> VideoModel::roleNames() const
 {
   QHash<int, QByteArray> roles;
-  roles[EditableRole] = "editable";
   roles[PathRole] = "path";
   roles[ThumbnailRole] = "thumbnail";
   return roles;
@@ -47,6 +44,10 @@ int VideoModel::rowCount(const QModelIndex& parent) const
   Q_UNUSED(parent)
   return videos_.size();
 }
+
+bool VideoModel::getEditable() const { return editable; }
+
+void VideoModel::setEditable(bool value) { emit editableChanged(editable = value); }
 
 void VideoModel::addVideo(const QString& path)
 {
