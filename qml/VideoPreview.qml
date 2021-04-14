@@ -1,6 +1,7 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.12
 import QtQuick.Controls.Material 2.12
+import QtMultimedia 5.12
 
 import VideoModel 1.0
 
@@ -14,8 +15,12 @@ Item {
 
     property variant model: model
 
+    focus: true
+
     PathView {
         id: pathView
+
+        focus: true
 
         anchors.fill: parent
         anchors.topMargin: buttonBack.y + buttonBack.height / 2
@@ -37,6 +42,32 @@ Item {
 
             z: PathView.iconOrder
             scale: PathView.iconScale
+
+            focus: true
+
+            Video {
+                id: video
+                anchors.fill: parent
+                source: path
+
+                focus: true
+
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        video.playbackState == MediaPlayer.PlayingState ? video.pause() : video.play()
+                    }
+                }
+
+                Keys.onSpacePressed: video.playbackState == MediaPlayer.PlayingState ? video.pause() : video.play()
+                Keys.onLeftPressed: video.seek(video.position - 5000)
+                Keys.onRightPressed: video.seek(video.position + 5000)
+
+                onPaused: {
+                    console.log(video.duration)
+                    console.log(video.position)
+                }
+            }
         }
 
         path: Path {
