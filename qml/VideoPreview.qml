@@ -15,12 +15,8 @@ Item {
 
     property variant model: model
 
-    focus: true
-
     PathView {
         id: pathView
-
-        focus: true
 
         anchors.fill: parent
         anchors.topMargin: buttonBack.y + buttonBack.height / 2
@@ -31,8 +27,10 @@ Item {
         highlightRangeMode: PathView.StrictlyEnforceRange
 
         model: root.model
+
         delegate: Rectangle {
             id: item
+
             height: parent.height * 0.5
             width: parent.width * 0.25
 
@@ -41,31 +39,33 @@ Item {
             z: PathView.iconOrder
             scale: PathView.iconScale
 
-            focus: true
-
             Rectangle {
                 width: parent.width
                 height: parent.height * 0.7
 
-                color: "darkgrey"
-
                 anchors.top: parent.top
 
-                Label {
-                    text: basename(path)
+                color: "darkgrey"
+                border.color: "black"
+                border.width: 1
 
-                    anchors.centerIn: parent
+                Label {
+                    text: fileName(path)
+
                     width: parent.width * 0.8
                     height: parent.height * 0.8
+
+                    anchors.centerIn: parent
 
                     wrapMode: "Wrap"
 
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
+
                     font.pointSize: 72
                     fontSizeMode: Text.Fit
 
-                    function basename(str)
+                    function fileName(str)
                     {
                         return (str.slice(str.lastIndexOf("/")+1))
                     }
@@ -73,29 +73,24 @@ Item {
                 MouseArea {
                     anchors.fill: parent
 
-                    onClicked: {
-                        video.source = path
-                        video.visible = true
-                        video.play()
-                        video.z = 999
-                    }
+                    onClicked: video.startPlaying(path)
                 }
             }
 
             Button {
-                id: button_edit
-
-                visible: model.editable
+                visible: pathView.model.editable && pathView.currentIndex == index
 
                 Label {
                     text: "Edit"
 
-                    anchors.centerIn: parent
                     width: parent.width * 0.8
                     height: parent.height * 0.8
 
+                    anchors.centerIn: parent
+
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
+
                     font.pointSize: 72
                     fontSizeMode: Text.Fit
                 }
@@ -106,7 +101,7 @@ Item {
                 width: parent.width / 3.0
                 height: parent.height * 0.2
 
-                onClicked: showEdited()
+                onClicked: popup.open()
             }
         }
 
@@ -154,6 +149,7 @@ Item {
 
     RoundButton {
         id: buttonLoadVideo
+
         x: parent.width - 20 - width
         y: 20
 
@@ -168,20 +164,42 @@ Item {
         id: video
         visible: false
 
-        muted: true
-
         anchors.fill: parent
 
-        focus: true
+        fillMode: VideoOutput.Stretch
+
+        muted: true
 
         MouseArea {
             anchors.fill: parent
 
-            onDoubleClicked: {
-                video.stop()
-                video.source = ""
-                video.visible = false
+            onClicked: {
+                video.stopPlaying();
             }
         }
+        Keys.onEscapePressed: {
+            video.stopPlaying();
+            event.accepted = true;
+        }
+
+        function startPlaying(path) {
+            video.source = path;
+            video.visible = true;
+            video.play();
+            video.z = 999;
+        }
+        function stopPlaying() {
+            video.stop();
+            video.source = "";
+            video.visible = false;
+            video.z = -1;
+        }
+    }
+
+    VideoOverlaysPopup {
+        id: popup
+
+        onOpened: root.enabled = false;
+        onClosed: root.enabled = true;
     }
 }

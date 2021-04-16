@@ -23,34 +23,41 @@ ApplicationWindow {
     title: qsTr("Video browser and editor")
 
     Item {
-        id: itemIndex
+        id: viewIndex
         property int index: -1
     }
 
     MainView {
         id: mainView
-        visible: itemIndex.index == -1
 
-        onShowRaw: itemIndex.index = 0
-        onShowEdited: itemIndex.index = 1
+        visible: viewIndex.index == -1
+
+        onShowRaw: viewIndex.index = 0
+        onShowEdited: viewIndex.index = 1
     }
     VideoPreview {
         id: videoPreviewRaw
-        visible: itemIndex.index == 0
+
+        visible: viewIndex.index == 0
+
         model: VideoModel{
             editable: true
         }
-        onBackTriggered: itemIndex.index = -1
+
+        onBackTriggered: viewIndex.index = -1
         onLoadVideoTriggered: videoDialog.open()
     }
     VideoPreview {
         id: videoPreviewEdited
-        visible: itemIndex.index == 1
+
+        visible: viewIndex.index == 1
+
         model: VideoModel
         {
             editable: false
         }
-        onBackTriggered: itemIndex.index = -1
+
+        onBackTriggered: viewIndex.index = -1
     }
 
     FileDialog {

@@ -12,49 +12,53 @@ Item {
 
     Button {
         id: button_raw
-        Label {
-            text: "Raw videos"
-
-            anchors.centerIn: parent
-            width: parent.width * 0.8
-            height: parent.height * 0.8
-
-            horizontalAlignment: Text.AlignHCenter
-            verticalAlignment: Text.AlignVCenter
-            font.pointSize: 72
-            fontSizeMode: Text.Fit
-        }
-
-        anchors.centerIn: parent
-        anchors.horizontalCenterOffset: -width / 1.5
 
         width: parent.width / 3.0
         height: parent.height / 3.0
 
+        anchors.centerIn: parent
+        anchors.horizontalCenterOffset: -width / 1.5
+
+        Label {
+            text: "Raw videos"
+
+            width: parent.width * 0.8
+            height: parent.height * 0.8
+
+            anchors.centerIn: parent
+
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+
+            font.pointSize: 72
+            fontSizeMode: Text.Fit
+        }
         onClicked: showRaw()
     }
 
     Button {
         id: button_edited
-        Label {
-            text: "Edited videos"
-
-            anchors.centerIn: parent
-            width: parent.width * 0.8
-            height: parent.height * 0.8
-
-            horizontalAlignment: Text.AlignHCenter
-            verticalAlignment: Text.AlignVCenter
-            font.pointSize: 72
-            fontSizeMode: Text.Fit
-        }
-
-        anchors.centerIn: parent
-        anchors.horizontalCenterOffset: width / 1.5
 
         width: parent.width / 3.0
         height: parent.height / 3.0
 
+        anchors.centerIn: parent
+        anchors.horizontalCenterOffset: width / 1.5
+
+        Label {
+            text: "Edited videos"
+
+            width: parent.width * 0.8
+            height: parent.height * 0.8
+
+            anchors.centerIn: parent
+
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+
+            font.pointSize: 72
+            fontSizeMode: Text.Fit
+        }
         onClicked: showEdited()
     }
 }
