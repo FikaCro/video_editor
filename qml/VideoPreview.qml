@@ -36,37 +36,77 @@ Item {
             height: parent.height * 0.5
             width: parent.width * 0.25
 
-            border.width: 5
-            border.color: "white"
-            color: "darkgrey"
+            color: "transparent"
 
             z: PathView.iconOrder
             scale: PathView.iconScale
 
             focus: true
 
-            Video {
-                id: video
-                anchors.fill: parent
-                source: path
+            Rectangle {
+                width: parent.width
+                height: parent.height * 0.7
 
-                focus: true
+                color: "darkgrey"
 
-                MouseArea {
-                    anchors.fill: parent
-                    onClicked: {
-                        video.playbackState == MediaPlayer.PlayingState ? video.pause() : video.play()
+                anchors.top: parent.top
+
+                Label {
+                    text: basename(path)
+
+                    anchors.centerIn: parent
+                    width: parent.width * 0.8
+                    height: parent.height * 0.8
+
+                    wrapMode: "Wrap"
+
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                    font.pointSize: 72
+                    fontSizeMode: Text.Fit
+
+                    function basename(str)
+                    {
+                        return (str.slice(str.lastIndexOf("/")+1))
                     }
                 }
+                MouseArea {
+                    anchors.fill: parent
 
-                Keys.onSpacePressed: video.playbackState == MediaPlayer.PlayingState ? video.pause() : video.play()
-                Keys.onLeftPressed: video.seek(video.position - 5000)
-                Keys.onRightPressed: video.seek(video.position + 5000)
-
-                onPaused: {
-                    console.log(video.duration)
-                    console.log(video.position)
+                    onClicked: {
+                        video.source = path
+                        video.visible = true
+                        video.play()
+                        video.z = 999
+                    }
                 }
+            }
+
+            Button {
+                id: button_edit
+
+                visible: model.editable
+
+                Label {
+                    text: "Edit"
+
+                    anchors.centerIn: parent
+                    width: parent.width * 0.8
+                    height: parent.height * 0.8
+
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                    font.pointSize: 72
+                    fontSizeMode: Text.Fit
+                }
+
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.bottom: parent.bottom
+
+                width: parent.width / 3.0
+                height: parent.height * 0.2
+
+                onClicked: showEdited()
             }
         }
 
@@ -122,5 +162,26 @@ Item {
         text: "Load video"
 
         onClicked: loadVideoTriggered()
+    }
+
+    Video {
+        id: video
+        visible: false
+
+        muted: true
+
+        anchors.fill: parent
+
+        focus: true
+
+        MouseArea {
+            anchors.fill: parent
+
+            onDoubleClicked: {
+                video.stop()
+                video.source = ""
+                video.visible = false
+            }
+        }
     }
 }
