@@ -35,7 +35,7 @@ public:
 
   Q_INVOKABLE QString getPath(int index);
 
-  Q_INVOKABLE void addVideo(const QString& path);
+  Q_INVOKABLE void addVideo(QString path);
   void addVideo(const Video& video);
 
 private:

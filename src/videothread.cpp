@@ -14,7 +14,7 @@ VideoThread::~VideoThread()
 
 void VideoThread::setVideoPath(QString value)
 {
-  value.remove("file://");
+  value = value.remove("file://");
   videoCapture = cv::VideoCapture(value.toStdString());
 
   QFileInfo fileInfo(value);
@@ -89,12 +89,12 @@ QImage VideoThread::cvMatToQImage(const cv::Mat& mat) const
 {
   cv::Mat tmp;
   cv::cvtColor(mat, tmp, CV_BGR2RGB);
-  return QImage((uchar*)mat.data, mat.cols, mat.rows, mat.step, QImage::Format_RGB888);
+  return QImage(static_cast<uchar*>(mat.data), mat.cols, mat.rows, static_cast<int>(mat.step), QImage::Format_RGB888);
 }
 
 cv::Mat VideoThread::qImageToCvMat(const QImage& image) const
 {
-  cv::Mat res(image.height(), image.width(), CV_8UC3, (uchar*)image.bits(), image.bytesPerLine());
+  cv::Mat res(image.height(), image.width(), CV_8UC3, (uchar*)image.bits(), static_cast<ulong>(image.bytesPerLine()));
   cv::cvtColor(res, res, CV_BGR2RGB);
   return res;
 }

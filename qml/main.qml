@@ -46,6 +46,7 @@ ApplicationWindow {
 
         onBackTriggered: viewIndex.index = -1
         onLoadVideoTriggered: videoDialog.open()
+        onVideoEdited: videoPreviewEdited.model.addVideo(path)
     }
     VideoPreview {
         id: videoPreviewEdited

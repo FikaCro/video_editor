@@ -58,9 +58,13 @@ QString VideoModel::getPath(int index)
   return videos[index].path;
 }
 
-void VideoModel::addVideo(const QString& path)
+void VideoModel::addVideo(QString path)
 {
   Video video;
+  if (!path.startsWith("file://"))
+  {
+    path.insert(0, "file://");
+  }
   video.path = path;
   // TODO: add thumbnail setup
   addVideo(video);

@@ -13,6 +13,7 @@ Item {
 
     signal backTriggered()
     signal loadVideoTriggered()
+    signal videoEdited(string path)
 
     property variant model: model
 
@@ -181,6 +182,8 @@ Item {
                 video.stopPlaying();
             }
         }
+        onStopped: video.stopPlaying();
+
         Keys.onEscapePressed: {
             video.stopPlaying();
             event.accepted = true;
@@ -217,17 +220,22 @@ Item {
                 var popupProgress = popupProgressFactory.createObject(root, {});
                 popupProgress.open();
 
-                popupProgress.abortTriggered.connect(function(){videoThread.abort();});
+                popupProgress.abortTriggered.connect(function(){
+                    videoThread.abort();
+                });
 
                 videoThread.videoEditingAborted.connect(function(){
                     videoThread.destroy();
                     popupProgress.close();
                 });
-                videoThread.videoEditingFinished.connect(function(){
+                videoThread.videoEditingFinished.connect(function(arg){
+                    root.videoEdited(arg);
                     videoThread.destroy();
                     popupProgress.close();
                 });
-                videoThread.videoEditingProcessed.connect(function(arg){popupProgress.progress = arg;})
+                videoThread.videoEditingProcessed.connect(function(arg){
+                    popupProgress.progress = arg;
+                })
 
                 videoThread.start();
             }
