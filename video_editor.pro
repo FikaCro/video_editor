@@ -1,4 +1,4 @@
-QT += qml quick
+QT += qml quick widgets
 
 CONFIG += c++17
 
@@ -10,11 +10,21 @@ LIBS += `pkg-config --cflags --libs opencv`
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 HEADERS += \
+        include/overlaybase.h \
+        include/overlayfactory.h \
+        include/overlaynumber.h \
+        include/overlayrect.h \
+        include/overlayslider.h \
         include/videomodel.h \
         include/videothread.h
 
 SOURCES += \
         src/main.cpp \
+        src/overlaybase.cpp \
+        src/overlayfactory.cpp \
+        src/overlaynumber.cpp \
+        src/overlayrect.cpp \
+        src/overlayslider.cpp \
         src/videomodel.cpp \
         src/videothread.cpp
 

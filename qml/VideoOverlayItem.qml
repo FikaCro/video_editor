@@ -7,6 +7,10 @@ Item {
     property string overlayType
     property int timeMiliseconds
 
+    readonly property int xPos: positionSpinBoxes.xPos
+    readonly property int yPos: positionSpinBoxes.yPos
+    readonly property bool applied: applyCheckBox.checked
+
     width: parent.width
     height: parent.height
 
@@ -44,9 +48,9 @@ Item {
                     {
                         return numberOverlay;
                     }
-                    else if (overlayType == "shapeOverlay")
+                    else if (overlayType == "rectangleOverlay")
                     {
-                        return shapeOverlay;
+                        return rectangleOverlay;
                     }
                     else if (overlayType == "sliderOverlay")
                     {
@@ -100,10 +104,10 @@ Item {
     }
 
     Component {
-        id: shapeOverlay
+        id: rectangleOverlay
 
         Rectangle {
-            id: shape
+            id: rectangleShape
 
             width: overlayRectangle.width * 0.1
             height: overlayRectangle.height * 0.1
@@ -114,11 +118,11 @@ Item {
             gradient: Gradient {
                 GradientStop {
                     position: 0.0
-                    color: Qt.hsla(shape.colorStart, 1, 0.5, 1)
+                    color: Qt.hsla(rectangleShape.colorStart, 1, 0.5, 1)
                 }
                 GradientStop {
                     position: 1.0
-                    color: Qt.hsla(shape.colorEnd, 1, 0.5, 1)
+                    color: Qt.hsla(rectangleShape.colorEnd, 1, 0.5, 1)
                 }
             }
 
@@ -128,10 +132,10 @@ Item {
                 repeat: true
 
                 onTriggered: {
-                    shape.x = Math.floor(Math.random() * 100) / 100 * (overlayRectangle.width - shape.width);
-                    shape.y = Math.floor(Math.random() * 100) / 100 * (overlayRectangle.height - shape.height);
-                    shape.colorStart = Math.floor(Math.random() * 100) / 100;
-                    shape.colorEnd = Math.floor(Math.random() * 100) / 100;
+                    rectangleShape.x = Math.floor(Math.random() * 100) / 100 * (overlayRectangle.width - rectangleShape.width);
+                    rectangleShape.y = Math.floor(Math.random() * 100) / 100 * (overlayRectangle.height - rectangleShape.height);
+                    rectangleShape.colorStart = Math.floor(Math.random() * 100) / 100;
+                    rectangleShape.colorEnd = Math.floor(Math.random() * 100) / 100;
                 }
             }
         }

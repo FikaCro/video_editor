@@ -4,6 +4,7 @@ import QtQuick.Controls.Material 2.12
 import QtMultimedia 5.12
 
 import VideoModel 1.0
+import VideoThread 1.0
 
 Item {
     id: root
@@ -101,7 +102,10 @@ Item {
                 width: parent.width / 3.0
                 height: parent.height * 0.2
 
-                onClicked: popup.open()
+                onClicked: {
+                    var popup = popupFactory.createObject(root, {});
+                    popup.open();
+                }
             }
         }
 
@@ -196,10 +200,32 @@ Item {
         }
     }
 
-    VideoOverlaysPopup {
-        id: popup
+    Component {
+        id: popupFactory
 
-        onOpened: root.enabled = false;
-        onClosed: root.enabled = true;
+        VideoOverlaysPopup {
+            onOpened: root.enabled = false;
+            onClosed: root.enabled = true;
+
+            onOverlaysApplyTriggered:
+            {
+                var videoThread = videoThreadFactory.createObject(root, {});
+                videoThread.setVideoPath(root.model.getPath(pathView.currentIndex))
+                for (let i=0; i <overlays.length; ++i)
+                {
+                    videoThread.setOverlay(overlays[i][0], overlays[i][1], overlays[i][2]);
+                }
+                videoThread.start()
+
+                videoThread.videoEditingFinished.connect(videoThread.destroy);
+            }
+        }
+    }
+    Component {
+        id: videoThreadFactory
+
+        VideoThread {
+            //onVideoEditingFinished: destroy()
+        }
     }
 }

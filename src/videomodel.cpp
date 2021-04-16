@@ -49,6 +49,15 @@ bool VideoModel::getEditable() const { return editable; }
 
 void VideoModel::setEditable(bool value) { emit editableChanged(editable = value); }
 
+QString VideoModel::getPath(int index)
+{
+  if (index < 0 || index >= videos.size())
+  {
+    return QString();
+  }
+  return videos[index].path;
+}
+
 void VideoModel::addVideo(const QString& path)
 {
   Video video;

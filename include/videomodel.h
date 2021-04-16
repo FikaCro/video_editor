@@ -33,6 +33,8 @@ public:
   bool getEditable() const;
   void setEditable(bool value);
 
+  Q_INVOKABLE QString getPath(int index);
+
   Q_INVOKABLE void addVideo(const QString& path);
   void addVideo(const Video& video);
 

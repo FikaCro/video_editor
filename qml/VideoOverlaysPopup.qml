@@ -5,6 +5,8 @@ import QtQuick.Layouts 1.12
 Popup {
     id: root
 
+    signal overlaysApplyTriggered(variant overlays)
+
     closePolicy: Popup.NoAutoClose
 
     x: (parent.width - width) / 2
@@ -20,6 +22,8 @@ Popup {
         anchors.bottom: rowButtons.top
 
         VideoOverlayItem {
+            id: numberOverlay
+
             width: parent.width / 3.
             height: parent.height
 
@@ -28,14 +32,18 @@ Popup {
         }
 
         VideoOverlayItem {
+            id: rectangleOverlay
+
             width: parent.width / 3.
             height: parent.height
 
-            overlayType: "shapeOverlay"
+            overlayType: "rectangleOverlay"
             timeMiliseconds: 1000
         }
 
         VideoOverlayItem {
+            id: sliderOverlay
+
             width: parent.width / 3.
             height: parent.height
 
@@ -61,7 +69,25 @@ Popup {
 
             text: "Apply"
 
-            onClicked: root.close()
+            onClicked:
+            {
+                var overlays = [];
+                if (numberOverlay.applied)
+                {
+                    console.log(Qt.point(numberOverlay.xPos, numberOverlay.yPos))
+                    overlays.push([numberOverlay.overlayType, numberOverlay.timeMiliseconds, Qt.point(numberOverlay.xPos, numberOverlay.yPos)])
+                }
+                if (rectangleOverlay.applied)
+                {
+                    overlays.push([rectangleOverlay.overlayType, rectangleOverlay.timeMiliseconds, Qt.point(rectangleOverlay.xPos, rectangleOverlay.yPos)])
+                }
+                if (sliderOverlay.applied)
+                {
+                    overlays.push([sliderOverlay.overlayType, sliderOverlay.timeMiliseconds, Qt.point(sliderOverlay.xPos, sliderOverlay.yPos)])
+                }
+                root.overlaysApplyTriggered(overlays)
+                root.close()
+            }
         }
 
         Button {

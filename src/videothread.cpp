@@ -1,6 +1,5 @@
 #include "include/videothread.h"
-
-#include <opencv2/opencv.hpp>
+#include "include/overlayfactory.h"
 
 #include <QFileInfo>
 
@@ -8,49 +7,104 @@
 
 VideoThread::VideoThread(QObject* parent) : QThread(parent) {}
 
+VideoThread::~VideoThread()
+{
+  quit();
+  wait();
+}
+
+void VideoThread::setVideoPath(QString value)
+{
+  value.remove("file://");
+  videoCapture = cv::VideoCapture(value.toStdString());
+
+  QFileInfo fileInfo(value);
+  editedVideoPath = fileInfo.absoluteFilePath().insert(
+      fileInfo.absoluteFilePath().length() - fileInfo.completeSuffix().length() - 1, "_edited");
+}
+
+void VideoThread::setOverlay(const QString& type, int changeTimeMiliseconds, const QPointF& initialPoint)
+{
+    qDebug() << initialPoint;
+  overlays.push_back(OverlayFactory::overlay(type, static_cast<int>(videoCapture.get(cv::CAP_PROP_FPS)),
+                                             changeTimeMiliseconds, initialPoint));
+}
+
 void VideoThread::run()
 {
-  videoPath = "/home/filipb/Downloads/video.mp4";
-  if (videoPath.isEmpty() || videoPath.isNull())
-  {
-    emit videoEditingAborted();
-    return;
-  }
-
-  cv::VideoCapture videoCapture(videoPath.toStdString());
   if (!videoCapture.isOpened())
   {
     emit videoEditingAborted();
     return;
   }
 
-  QFileInfo fileInfo(videoPath);
-  QString editedFilePath = fileInfo.absoluteFilePath().insert(
-      fileInfo.absoluteFilePath().length() - fileInfo.completeSuffix().length() - 1, "_edited");
+  cv::VideoWriter videoWriter = createVideoWriter();
 
-  double frameCount = videoCapture.get(cv::CAP_PROP_FRAME_COUNT);
+  int frameCount{static_cast<int>(videoCapture.get(cv::CAP_PROP_FRAME_COUNT))};
+  int frameIndex{0};
+  while (true)
+  {
+    cv::Mat frame;
+    if (!videoCapture.read(frame) || abortCalled)
+    {
+      removeFileAndAbort();
+      return;
+    }
+
+    QImage image = cvMatToQImage(frame);
+    paintOverlays(frameIndex, image);
+    videoWriter.write(qImageToCvMat(image));
+
+    emit videoEditingProcessed(frameIndex / frameCount);
+    frameIndex++;
+
+    if (frameIndex == frameCount)
+    {
+      break;
+    }
+  }
+
+  emit videoEditingFinished(editedVideoPath);
+}
+
+void VideoThread::abort() { abortCalled = true; }
+
+void VideoThread::removeFileAndAbort()
+{
+  QFile file(editedVideoPath);
+  file.remove();
+  emit videoEditingAborted();
+}
+
+cv::VideoWriter VideoThread::createVideoWriter() const
+{
   double fourcc = videoCapture.get(cv::CAP_PROP_FOURCC);
   double fps = videoCapture.get(cv::CAP_PROP_FPS);
   double width = videoCapture.get(cv::CAP_PROP_FRAME_WIDTH);
   double height = videoCapture.get(cv::CAP_PROP_FRAME_HEIGHT);
 
-  cv::VideoWriter videoWriter(editedFilePath.toStdString(), static_cast<int>(fourcc), fps,
-                              cv::Size(static_cast<int>(width), static_cast<int>(height)));
-
-  double frameIndex = 0;
-  while (!abortCalled)
-  {
-    cv::Mat frame;
-    if (!videoCapture.read(frame))
-    {
-      emit videoEditingAborted();
-      return;
-    }
-
-    videoWriter.write(frame);
-    emit videoEditingProcessed(frameIndex / frameCount);
-    frameIndex++;
-  }
+  return cv::VideoWriter(editedVideoPath.toStdString(), static_cast<int>(fourcc), fps,
+                         cv::Size(static_cast<int>(width), static_cast<int>(height)));
 }
 
-void VideoThread::abort() { abortCalled = true; }
+QImage VideoThread::cvMatToQImage(const cv::Mat& mat) const
+{
+  cv::Mat tmp;
+  cv::cvtColor(mat, tmp, CV_BGR2RGB);
+  return QImage((uchar*)mat.data, mat.cols, mat.rows, mat.step, QImage::Format_RGB888);
+}
+
+cv::Mat VideoThread::qImageToCvMat(const QImage& image) const
+{
+  cv::Mat res(image.height(), image.width(), CV_8UC3, (uchar*)image.bits(), image.bytesPerLine());
+  cv::cvtColor(res, res, CV_BGR2RGB);
+  return res;
+}
+
+void VideoThread::paintOverlays(int frameIndex, QImage& image)
+{
+  for (auto& overlay : overlays)
+  {
+    overlay->paint(frameIndex, image);
+  }
+}
