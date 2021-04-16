@@ -16,10 +16,10 @@ public:
   ~VideoThread();
 
   Q_INVOKABLE void setVideoPath(QString value);
-  Q_INVOKABLE void setOverlay(const QString& type, int changeTimeMiliseconds, const QPointF& initialPoint);
+  Q_INVOKABLE void setOverlay(const QString& type, int changeTimeMiliseconds, double xPercentage, double yPercentage);
 
   void run() Q_DECL_OVERRIDE;
-  void abort();
+  Q_INVOKABLE void abort();
 
 private:
   void removeFileAndAbort();

@@ -74,19 +74,22 @@ Popup {
                 var overlays = [];
                 if (numberOverlay.applied)
                 {
-                    console.log(Qt.point(numberOverlay.xPos, numberOverlay.yPos))
-                    overlays.push([numberOverlay.overlayType, numberOverlay.timeMiliseconds, Qt.point(numberOverlay.xPos, numberOverlay.yPos)])
+                    overlays.push([numberOverlay.overlayType, numberOverlay.timeMiliseconds, numberOverlay.xPos, numberOverlay.yPos])
                 }
                 if (rectangleOverlay.applied)
                 {
-                    overlays.push([rectangleOverlay.overlayType, rectangleOverlay.timeMiliseconds, Qt.point(rectangleOverlay.xPos, rectangleOverlay.yPos)])
+                    overlays.push([rectangleOverlay.overlayType, rectangleOverlay.timeMiliseconds,rectangleOverlay.xPos, rectangleOverlay.yPos])
                 }
                 if (sliderOverlay.applied)
                 {
-                    overlays.push([sliderOverlay.overlayType, sliderOverlay.timeMiliseconds, Qt.point(sliderOverlay.xPos, sliderOverlay.yPos)])
+                    overlays.push([sliderOverlay.overlayType, sliderOverlay.timeMiliseconds, sliderOverlay.xPos, sliderOverlay.yPos])
                 }
-                root.overlaysApplyTriggered(overlays)
                 root.close()
+
+                if (overlays.length != 0)
+                {
+                    root.overlaysApplyTriggered(overlays)
+                }
             }
         }
 

@@ -103,7 +103,7 @@ Item {
                 height: parent.height * 0.2
 
                 onClicked: {
-                    var popup = popupFactory.createObject(root, {});
+                    var popup = popupOverlaysFactory.createObject(root, {});
                     popup.open();
                 }
             }
@@ -201,23 +201,34 @@ Item {
     }
 
     Component {
-        id: popupFactory
+        id: popupOverlaysFactory
 
         VideoOverlaysPopup {
-            onOpened: root.enabled = false;
-            onClosed: root.enabled = true;
-
             onOverlaysApplyTriggered:
             {
                 var videoThread = videoThreadFactory.createObject(root, {});
                 videoThread.setVideoPath(root.model.getPath(pathView.currentIndex))
                 for (let i=0; i <overlays.length; ++i)
                 {
-                    videoThread.setOverlay(overlays[i][0], overlays[i][1], overlays[i][2]);
+                    videoThread.setOverlay(overlays[i][0], overlays[i][1], overlays[i][2], overlays[i][3]);
                 }
-                videoThread.start()
 
-                videoThread.videoEditingFinished.connect(videoThread.destroy);
+                var popupProgress = popupProgressFactory.createObject(root, {});
+                popupProgress.open();
+
+                popupProgress.abortTriggered.connect(function(){videoThread.abort();});
+
+                videoThread.videoEditingAborted.connect(function(){
+                    videoThread.destroy();
+                    popupProgress.close();
+                });
+                videoThread.videoEditingFinished.connect(function(){
+                    videoThread.destroy();
+                    popupProgress.close();
+                });
+                videoThread.videoEditingProcessed.connect(function(arg){popupProgress.progress = arg;})
+
+                videoThread.start();
             }
         }
     }
@@ -225,7 +236,53 @@ Item {
         id: videoThreadFactory
 
         VideoThread {
-            //onVideoEditingFinished: destroy()
         }
+    }
+
+    Component {
+        id: popupProgressFactory
+
+        Popup {
+            id: popupProgress
+
+            signal abortTriggered()
+
+            x: root.width * 0.4
+            y: root.height * 0.4
+            width: root.width * 0.2
+            height: root.height * 0.2
+
+            property real progress: 0
+
+            closePolicy: Popup.NoAutoClose
+
+            ProgressBar {
+                id: progressBar
+
+                width: parent.width
+                height: parent.height / 2
+
+                anchors.top: parent.top
+
+                from: 0
+                to: 1
+                value: popupProgress.progress
+            }
+            Button {
+                text: "Cancel"
+
+                width: parent.width / 2
+                height: parent.height / 4
+
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.bottom: parent.bottom
+
+                onClicked: popupProgress.abortTriggered()
+            }
+
+            onOpened: root.enabled = false;
+            onClosed: root.enabled = true;
+        }
+
     }
 }

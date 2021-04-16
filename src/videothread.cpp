@@ -3,8 +3,6 @@
 
 #include <QFileInfo>
 
-#include <QDebug>
-
 VideoThread::VideoThread(QObject* parent) : QThread(parent) {}
 
 VideoThread::~VideoThread()
@@ -23,11 +21,10 @@ void VideoThread::setVideoPath(QString value)
       fileInfo.absoluteFilePath().length() - fileInfo.completeSuffix().length() - 1, "_edited");
 }
 
-void VideoThread::setOverlay(const QString& type, int changeTimeMiliseconds, const QPointF& initialPoint)
+void VideoThread::setOverlay(const QString& type, int changeTimeMiliseconds, double xPercentage, double yPercentage)
 {
-    qDebug() << initialPoint;
   overlays.push_back(OverlayFactory::overlay(type, static_cast<int>(videoCapture.get(cv::CAP_PROP_FPS)),
-                                             changeTimeMiliseconds, initialPoint));
+                                             changeTimeMiliseconds, QPointF(xPercentage, yPercentage)));
 }
 
 void VideoThread::run()
@@ -55,7 +52,7 @@ void VideoThread::run()
     paintOverlays(frameIndex, image);
     videoWriter.write(qImageToCvMat(image));
 
-    emit videoEditingProcessed(frameIndex / frameCount);
+    emit videoEditingProcessed(static_cast<double>(frameIndex) / static_cast<double>(frameCount));
     frameIndex++;
 
     if (frameIndex == frameCount)
