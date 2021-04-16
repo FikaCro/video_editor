@@ -13,7 +13,7 @@ class VideoThread : public QThread
 
 public:
   VideoThread(QObject* parent = nullptr);
-  ~VideoThread();
+  ~VideoThread() Q_DECL_OVERRIDE;
 
   Q_INVOKABLE void setVideoPath(QString value);
   Q_INVOKABLE void setOverlay(const QString& type, int changeTimeMiliseconds, double xPercentage, double yPercentage);

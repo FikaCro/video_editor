@@ -7,8 +7,8 @@ Item {
     property string overlayType
     property int timeMiliseconds
 
-    readonly property int xPos: positionSpinBoxes.xPos
-    readonly property int yPos: positionSpinBoxes.yPos
+    readonly property int xPercentage: positionSpinBoxes.xPercentage
+    readonly property int yPercentage: positionSpinBoxes.yPercentage
     readonly property bool applied: applyCheckBox.checked
 
     width: parent.width
@@ -88,8 +88,8 @@ Item {
 
                 text: "0"
 
-                x: positionSpinBoxes.xPos * (overlayRectangle.width - width)
-                y: positionSpinBoxes.yPos * (overlayRectangle.height - height)
+                x: positionSpinBoxes.xPercentage / 100.0 * (overlayRectangle.width - width)
+                y: positionSpinBoxes.yPercentage / 100.0 * (overlayRectangle.height - height)
             }
             Timer {
                 interval: root.timeMiliseconds
@@ -151,8 +151,8 @@ Item {
 
             width: overlayRectangle.width / 3
 
-            x: positionSpinBoxes.xPos * (overlayRectangle.width - width)
-            y: positionSpinBoxes.yPos * (overlayRectangle.height - height)
+            x: positionSpinBoxes.xPercentage / 100.0 * (overlayRectangle.width - width)
+            y: positionSpinBoxes.yPercentage / 100.0 * (overlayRectangle.height - height)
 
             from: 0
             to: 1

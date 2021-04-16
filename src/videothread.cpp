@@ -7,6 +7,7 @@ VideoThread::VideoThread(QObject* parent) : QThread(parent) {}
 
 VideoThread::~VideoThread()
 {
+  abortCalled = true;
   quit();
   wait();
 }

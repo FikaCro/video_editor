@@ -5,8 +5,8 @@
 #include <QStyleOptionSlider>
 #include <QStylePainter>
 
-OverlaySlider::OverlaySlider(int videoFps, int changeTimeMiliseconds, const QPointF& initialPoint)
-    : OverlayBase(videoFps, changeTimeMiliseconds, initialPoint)
+OverlaySlider::OverlaySlider(int videoFps, int changeTimeMiliseconds, const QPointF& pointPercentage)
+    : OverlayBase(videoFps, changeTimeMiliseconds, pointPercentage)
 {
 }
 
@@ -19,7 +19,8 @@ void OverlaySlider::paint(int frameIndex, QImage& image)
   opt.maximum = changeFps / 2;
   opt.sliderValue = number + increment * 1;
   opt.sliderPosition = number + increment * 1;
-  opt.rect = QRect(QPoint(static_cast<int>(point.x()), static_cast<int>(point.y())),
+  opt.rect = QRect(QPoint(static_cast<int>(pointPercentage.x() / 100.0 * image.width()),
+                          static_cast<int>(pointPercentage.y() / 100.0 * image.height())),
                    QSize(static_cast<int>(image.width() * 0.2), static_cast<int>(image.width() * 0.2)));
 
   QSlider slider;

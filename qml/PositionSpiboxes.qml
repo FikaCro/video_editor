@@ -2,8 +2,8 @@ import QtQuick 2.0
 import QtQuick.Controls 2.12
 
 Item {
-    readonly property double xPos: spinBoxX.value
-    readonly property double yPos: spinBoxY.value
+    readonly property double xPercentage: spinBoxX.value
+    readonly property double yPercentage: spinBoxY.value
 
     Column {
         width: parent.width

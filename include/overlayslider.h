@@ -6,7 +6,7 @@
 class OverlaySlider : public OverlayBase
 {
 public:
-  OverlaySlider(int videoFps, int changeTimeMiliseconds, const QPointF& initialPoint);
+  OverlaySlider(int videoFps, int changeTimeMiliseconds, const QPointF& pointPercentage);
 
   void paint(int frameIndex, QImage& image) Q_DECL_OVERRIDE;
 

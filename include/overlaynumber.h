@@ -6,7 +6,7 @@
 class OverlayNumber : public OverlayBase
 {
 public:
-  OverlayNumber(int videoFps, int changeTimeMiliseconds, const QPointF& initialPoint);
+  OverlayNumber(int videoFps, int changeTimeMiliseconds, const QPointF& pointPercentage);
 
   void paint(int frameIndex, QImage& image) Q_DECL_OVERRIDE;
 

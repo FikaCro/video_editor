@@ -200,6 +200,7 @@ Item {
         }
     }
 
+
     Component {
         id: popupOverlaysFactory
 
@@ -232,6 +233,7 @@ Item {
             }
         }
     }
+
     Component {
         id: videoThreadFactory
 
@@ -283,6 +285,5 @@ Item {
             onOpened: root.enabled = false;
             onClosed: root.enabled = true;
         }
-
     }
 }

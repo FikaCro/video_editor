@@ -8,7 +8,7 @@
 class OverlayRect : public OverlayBase
 {
 public:
-  OverlayRect(int videoFps, int changeTimeMiliseconds, const QPointF& initialPoint);
+  OverlayRect(int videoFps, int changeTimeMiliseconds, const QPointF& pointPercentage);
 
   void paint(int frameIndex, QImage& image) Q_DECL_OVERRIDE;
 

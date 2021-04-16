@@ -11,7 +11,7 @@ class OverlayFactory
 {
 public:
   static std::shared_ptr<OverlayBase> overlay(const QString& type, int videoFps, int changeTimeMiliseconds,
-                                              const QPointF& initialPoint);
+                                              const QPointF& pointPercentage);
 };
 
 #endif // OVERLAYFACTORY_H

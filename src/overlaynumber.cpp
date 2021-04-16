@@ -2,8 +2,8 @@
 
 #include <QPainter>
 
-OverlayNumber::OverlayNumber(int videoFps, int changeTimeMiliseconds, const QPointF& initialPoint)
-    : OverlayBase(videoFps, changeTimeMiliseconds, initialPoint)
+OverlayNumber::OverlayNumber(int videoFps, int changeTimeMiliseconds, const QPointF& pointPercentage)
+    : OverlayBase(videoFps, changeTimeMiliseconds, pointPercentage)
 {
   number = rand() % 100;
 }
@@ -26,5 +26,7 @@ void OverlayNumber::paint(int frameIndex, QImage& image)
   painter.setPen(pen);
   painter.setFont(font);
 
-  painter.drawText(point, QString::number(number));
+  painter.drawText(QPointF(std::max(10., pointPercentage.x() / 100.0 * image.width()),
+                           std::max(10., pointPercentage.y() / 100.0 * image.height())),
+                   QString::number(number));
 }

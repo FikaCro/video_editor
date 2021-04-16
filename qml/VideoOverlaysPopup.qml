@@ -74,19 +74,19 @@ Popup {
                 var overlays = [];
                 if (numberOverlay.applied)
                 {
-                    overlays.push([numberOverlay.overlayType, numberOverlay.timeMiliseconds, numberOverlay.xPos, numberOverlay.yPos])
+                    overlays.push([numberOverlay.overlayType, numberOverlay.timeMiliseconds, numberOverlay.xPercentage, numberOverlay.yPercentage])
                 }
                 if (rectangleOverlay.applied)
                 {
-                    overlays.push([rectangleOverlay.overlayType, rectangleOverlay.timeMiliseconds,rectangleOverlay.xPos, rectangleOverlay.yPos])
+                    overlays.push([rectangleOverlay.overlayType, rectangleOverlay.timeMiliseconds,rectangleOverlay.xPercentage, rectangleOverlay.yPercentage])
                 }
                 if (sliderOverlay.applied)
                 {
-                    overlays.push([sliderOverlay.overlayType, sliderOverlay.timeMiliseconds, sliderOverlay.xPos, sliderOverlay.yPos])
+                    overlays.push([sliderOverlay.overlayType, sliderOverlay.timeMiliseconds, sliderOverlay.xPercentage, sliderOverlay.yPercentage])
                 }
                 root.close()
 
-                if (overlays.length != 0)
+                if (overlays.length !== 0)
                 {
                     root.overlaysApplyTriggered(overlays)
                 }
