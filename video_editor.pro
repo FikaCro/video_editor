@@ -10,11 +10,13 @@ LIBS += `pkg-config --cflags --libs opencv`
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 HEADERS += \
-        include/videomodel.h
+        include/videomodel.h \
+        include/videothread.h
 
 SOURCES += \
         src/main.cpp \
-        src/videomodel.cpp
+        src/videomodel.cpp \
+        src/videothread.cpp
 
 RESOURCES += qml/qml.qrc
 

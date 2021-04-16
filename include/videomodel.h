@@ -3,7 +3,7 @@
 
 #include <QAbstractListModel>
 #include <QImage>
-#include <opencv2/opencv.hpp>
+
 struct Video
 {
   QString path;
@@ -37,7 +37,7 @@ public:
   void addVideo(const Video& video);
 
 private:
-  QList<Video> videos_;
+  QList<Video> videos;
   bool editable{false};
 
 signals:

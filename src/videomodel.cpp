@@ -8,16 +8,16 @@ QVariant VideoModel::data(const QModelIndex& index, int role) const
   {
     return QVariant();
   }
-  if (index.row() < 0 || index.row() >= videos_.size())
+  if (index.row() < 0 || index.row() >= videos.size())
   {
     return QVariant();
   }
   switch (role)
   {
   case PathRole:
-    return QVariant(videos_.at(index.row()).path);
+    return QVariant(videos.at(index.row()).path);
   case ThumbnailRole:
-    return QVariant(videos_.at(index.row()).thumbnail);
+    return QVariant(videos.at(index.row()).thumbnail);
   default:
     return QVariant();
   }
@@ -42,7 +42,7 @@ QHash<int, QByteArray> VideoModel::roleNames() const
 int VideoModel::rowCount(const QModelIndex& parent) const
 {
   Q_UNUSED(parent)
-  return videos_.size();
+  return videos.size();
 }
 
 bool VideoModel::getEditable() const { return editable; }
@@ -59,9 +59,9 @@ void VideoModel::addVideo(const QString& path)
 
 void VideoModel::addVideo(const Video& video)
 {
-  beginInsertRows(QModelIndex(), videos_.size(), videos_.size());
+  beginInsertRows(QModelIndex(), videos.size(), videos.size());
 
-  videos_.push_back(std::move(video));
+  videos.push_back(std::move(video));
 
   endInsertRows();
   emit dataChanged(QModelIndex(), QModelIndex());

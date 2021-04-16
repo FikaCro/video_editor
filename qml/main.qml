@@ -4,6 +4,7 @@ import QtQuick.Controls.Material 2.12
 import QtQuick.Dialogs 1.2
 
 import VideoModel 1.0
+import VideoThread 1.0
 
 ApplicationWindow {
     id: root
@@ -58,6 +59,14 @@ ApplicationWindow {
         }
 
         onBackTriggered: viewIndex.index = -1
+
+        VideoThread {
+            id: thread
+        }
+
+        Component.onCompleted: {
+            thread.start();
+        }
     }
 
     FileDialog {

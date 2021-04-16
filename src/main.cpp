@@ -2,6 +2,7 @@
 #include <QQmlApplicationEngine>
 
 #include "include/videomodel.h"
+#include "include/videothread.h"
 
 int main(int argc, char* argv[])
 {
@@ -19,6 +20,7 @@ int main(int argc, char* argv[])
                    Qt::QueuedConnection);
 
   qmlRegisterType<VideoModel>("VideoModel", 1, 0, "VideoModel");
+  qmlRegisterType<VideoThread>("VideoThread", 1, 0, "VideoThread");
 
   engine.load(url);
 
