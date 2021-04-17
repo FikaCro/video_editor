@@ -1,5 +1,4 @@
 #include "include/videothread.h"
-#include "include/overlayfactory.h"
 
 #include <QFileInfo>
 
@@ -22,7 +21,8 @@ void VideoThread::setVideoPath(QString value)
       fileInfo.absoluteFilePath().length() - fileInfo.completeSuffix().length() - 1, "_edited");
 }
 
-void VideoThread::setOverlay(const QString& type, int changeTimeMiliseconds, double xPercentage, double yPercentage)
+void VideoThread::setOverlay(const OverlayEffects::Type& type, int changeTimeMiliseconds, double xPercentage,
+                             double yPercentage)
 {
   overlays.push_back(OverlayFactory::overlay(type, static_cast<int>(videoCapture.get(cv::CAP_PROP_FPS)),
                                              changeTimeMiliseconds, QPointF(xPercentage, yPercentage)));

@@ -2,6 +2,7 @@
 #define VIDEOTHREAD_H
 
 #include "overlaybase.h"
+#include "overlayfactory.h"
 
 #include <QThread>
 
@@ -16,7 +17,8 @@ public:
   ~VideoThread() Q_DECL_OVERRIDE;
 
   Q_INVOKABLE void setVideoPath(QString value);
-  Q_INVOKABLE void setOverlay(const QString& type, int changeTimeMiliseconds, double xPercentage, double yPercentage);
+  Q_INVOKABLE void setOverlay(const OverlayEffects::Type& type, int changeTimeMiliseconds, double xPercentage,
+                              double yPercentage);
 
   void run() Q_DECL_OVERRIDE;
   Q_INVOKABLE void abort();

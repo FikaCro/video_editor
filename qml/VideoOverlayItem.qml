@@ -1,10 +1,11 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.12
+import OverlayEffects 1.0
 
 Item {
     id: root
 
-    property string overlayType
+    property variant overlayType
     property int timeMiliseconds
 
     readonly property int xPercentage: positionSpinBoxes.xPercentage
@@ -44,15 +45,15 @@ Item {
 
             Loader {
                 sourceComponent: {
-                    if (overlayType == "numberOverlay")
+                    if (overlayType === OverlayEffects.Number)
                     {
                         return numberOverlay;
                     }
-                    else if (overlayType == "rectangleOverlay")
+                    else if (overlayType === OverlayEffects.Rectangle)
                     {
                         return rectangleOverlay;
                     }
-                    else if (overlayType == "sliderOverlay")
+                    else if (overlayType === OverlayEffects.Slider)
                     {
                         return sliderOverlay;
                     }

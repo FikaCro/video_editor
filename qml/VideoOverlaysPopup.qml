@@ -2,6 +2,8 @@ import QtQuick 2.0
 import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 
+import OverlayEffects 1.0
+
 Popup {
     id: root
 
@@ -27,7 +29,7 @@ Popup {
             width: parent.width / 3.
             height: parent.height
 
-            overlayType: "numberOverlay"
+            overlayType: OverlayEffects.Number
             timeMiliseconds: 300
         }
 
@@ -37,7 +39,7 @@ Popup {
             width: parent.width / 3.
             height: parent.height
 
-            overlayType: "rectangleOverlay"
+            overlayType: OverlayEffects.Rectangle
             timeMiliseconds: 1000
         }
 
@@ -47,7 +49,7 @@ Popup {
             width: parent.width / 3.
             height: parent.height
 
-            overlayType: "sliderOverlay"
+            overlayType: OverlayEffects.Slider
             timeMiliseconds: 500
         }
     }

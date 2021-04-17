@@ -3,19 +3,17 @@
 #include "include/overlayrect.h"
 #include "include/overlayslider.h"
 
-std::shared_ptr<OverlayBase> OverlayFactory::overlay(const QString& type, int videoFps, int changeTimeMiliseconds,
-                                                     const QPointF& pointPercentage)
+std::shared_ptr<OverlayBase> OverlayFactory::overlay(const OverlayEffects::Type& type, int videoFps,
+                                                     int changeTimeMiliseconds, const QPointF& pointPercentage)
 {
-  if (type == "numberOverlay")
+  using namespace OverlayEffects;
+  switch (type)
   {
+  case Number:
     return std::make_shared<OverlayNumber>(videoFps, changeTimeMiliseconds, pointPercentage);
-  }
-  else if (type == "rectangleOverlay")
-  {
+  case Rectangle:
     return std::make_shared<OverlayRect>(videoFps, changeTimeMiliseconds, pointPercentage);
-  }
-  else if (type == "sliderOverlay")
-  {
+  case Slider:
     return std::make_shared<OverlaySlider>(videoFps, changeTimeMiliseconds, pointPercentage);
   }
   return nullptr;

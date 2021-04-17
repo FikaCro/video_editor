@@ -1,6 +1,7 @@
 #include <QApplication>
 #include <QQmlApplicationEngine>
 
+#include "include/overlayfactory.h"
 #include "include/videomodel.h"
 #include "include/videothread.h"
 
@@ -23,6 +24,8 @@ int main(int argc, char* argv[])
 
   qmlRegisterType<VideoModel>("VideoModel", 1, 0, "VideoModel");
   qmlRegisterType<VideoThread>("VideoThread", 1, 0, "VideoThread");
+  qmlRegisterUncreatableMetaObject(OverlayEffects::staticMetaObject, "OverlayEffects", 1, 0, "OverlayEffects",
+                                   "Error: only enums");
 
   engine.load(url);
 
