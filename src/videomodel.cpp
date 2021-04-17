@@ -1,4 +1,5 @@
 #include "include/videomodel.h"
+#include "include/helpers.h"
 
 #include <QFile>
 
@@ -56,13 +57,22 @@ bool VideoModel::getEditable() const { return editable; }
 
 void VideoModel::setEditable(bool value) { emit editableChanged(editable = value); }
 
-QString VideoModel::getPath(int index)
+QString VideoModel::getPath(int index) const
 {
   if (index < 0 || index >= videos.size())
   {
     return QString();
   }
   return videos[index].path;
+}
+
+QImage VideoModel::getThumbnail(int index) const
+{
+  if (index < 0 || index >= videos.size())
+  {
+    return QImage();
+  }
+  return videos[index].thumbnail;
 }
 
 void VideoModel::addVideo(QString path)
@@ -73,6 +83,8 @@ void VideoModel::addVideo(QString path)
     path = path.insert(0, "file://");
   }
   video.path = path;
+  video.thumbnail = Helper::videoThumbnail(video.path);
+
   addVideo(video);
 }
 

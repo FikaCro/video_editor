@@ -10,11 +10,13 @@ LIBS += `pkg-config --cflags --libs opencv`
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 HEADERS += \
+        include/helpers.h \
         include/overlaybase.h \
         include/overlayfactory.h \
         include/overlaynumber.h \
         include/overlayrect.h \
         include/overlayslider.h \
+        include/thumbnailitem.h \
         include/videomodel.h \
         include/videothread.h
 
@@ -25,6 +27,7 @@ SOURCES += \
         src/overlaynumber.cpp \
         src/overlayrect.cpp \
         src/overlayslider.cpp \
+        src/thumbnailitem.cpp \
         src/videomodel.cpp \
         src/videothread.cpp
 

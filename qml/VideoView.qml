@@ -3,6 +3,7 @@ import QtQuick.Controls 2.12
 import QtQuick.Controls.Material 2.12
 import QtMultimedia 5.12
 
+import ThumbnailItem 1.0
 import VideoModel 1.0
 import VideoThread 1.0
 
@@ -43,17 +44,28 @@ Item {
 
                 anchors.top: parent.top
 
-                color: "darkgrey"
+                color: "transparent"
+
                 border.color: "black"
                 border.width: 1
+
+                ThumbnailItem {
+                    width: parent.width
+                    height: parent.height * 0.8
+
+                    anchors.bottom: parent.bottom
+
+                    thumbnail: pathView.model.getThumbnail(index)
+                }
 
                 Label {
                     text: fileName(path)
 
                     width: parent.width * 0.8
-                    height: parent.height * 0.8
+                    height: parent.height * 0.2
 
-                    anchors.centerIn: parent
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.top: parent.top
 
                     wrapMode: "Wrap"
 
@@ -61,6 +73,7 @@ Item {
                     verticalAlignment: Text.AlignVCenter
 
                     font.pointSize: 72
+                    minimumPointSize: 8
                     fontSizeMode: Text.Fit
 
                     function fileName(path)
@@ -223,15 +236,22 @@ Item {
                     popupProgress.close();
                 });
                 videoThread.videoEditingFinished.connect(function(arg){
-                    root.videoEditingFinished(arg);
                     videoThread.destroy();
                     popupProgress.close();
+                    root.videoEditingFinished(arg);
                 });
                 videoThread.videoEditingProcessed.connect(function(arg){
                     popupProgress.progress = arg;
                 })
 
                 videoThread.start();
+            }
+
+            onOpened: parent.enabled = false;
+            onClosed:
+            {
+                parent.enabled = true;
+                // destroy(); // causes strange behavior when uncommented (reference root is not defined)
             }
         }
     }
@@ -246,7 +266,11 @@ Item {
             height: parent.height * 0.2
 
             onOpened: parent.enabled = false;
-            onClosed: parent.enabled = true;
+            onClosed:
+            {
+                parent.enabled = true;
+               // destroy(); // causes strange behavior when uncommented (reference root is not defined)
+            }
         }
     }
 }

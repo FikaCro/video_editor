@@ -1,7 +1,6 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.12
 
-// Self destructing on calling close()
 Popup {
     id: root
 
@@ -11,13 +10,32 @@ Popup {
 
     closePolicy: Popup.NoAutoClose
 
+    Label {
+        id: labelProgress
+
+        text: "Progress..."
+
+        width: parent.width
+        height: parent.height / 5
+
+        anchors.top: parent.top
+        anchors.horizontalCenter: parent.horizontalCenter
+
+        horizontalAlignment: Text.AlignHCenter
+        verticalAlignment: Text.AlignTop
+
+        minimumPointSize: 8
+        font.pointSize: 72
+        fontSizeMode: Text.Fit
+    }
+
     ProgressBar {
         id: progressBar
 
         width: parent.width
         height: parent.height / 2
 
-        anchors.top: parent.top
+        anchors.top: labelProgress.bottom
 
         from: 0
         to: 100
@@ -34,6 +52,4 @@ Popup {
 
         onClicked: root.abortTriggered()
     }
-
-    onClosed: destroy(10000);
 }

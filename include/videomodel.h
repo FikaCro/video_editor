@@ -32,7 +32,8 @@ public:
 
   bool getEditable() const;
   void setEditable(bool value);
-  Q_INVOKABLE QString getPath(int index);
+  Q_INVOKABLE QString getPath(int index) const;
+  Q_INVOKABLE QImage getThumbnail(int index) const;
   Q_INVOKABLE void addVideo(QString path);
 
 private:

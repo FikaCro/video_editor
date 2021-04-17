@@ -1,4 +1,5 @@
 #include "include/videothread.h"
+#include "include/helpers.h"
 
 #include <QFileInfo>
 
@@ -18,7 +19,7 @@ void VideoThread::setVideoPath(QString value)
 
   QFileInfo fileInfo(value);
   editedVideoPath = fileInfo.absoluteFilePath().insert(
-      fileInfo.absoluteFilePath().length() - fileInfo.completeSuffix().length() - 1, "_edited");
+      fileInfo.absoluteFilePath().length() - fileInfo.suffix().length() - 1, "_edited");
 }
 
 void VideoThread::setOverlay(const OverlayEffects::Type& type, int changeTimeMiliseconds, double xPercentage,
@@ -54,9 +55,9 @@ void VideoThread::run()
       return;
     }
 
-    QImage image = cvMatToQImage(frame);
+    QImage image = Helper::cvMatToQImage(frame);
     paintOverlays(frameIndex, image);
-    videoWriter.write(qImageToCvMat(image));
+    videoWriter.write(Helper::qImageToCvMat(image));
 
     emit videoEditingProcessed(
         static_cast<int>(static_cast<double>(frameIndex) / static_cast<double>(frameCount) * 100.0));
@@ -67,7 +68,7 @@ void VideoThread::run()
       break;
     }
   }
-
+  videoWriter.release();
   emit videoEditingFinished(editedVideoPath);
 }
 
@@ -87,17 +88,6 @@ cv::VideoWriter VideoThread::createVideoWriter() const
 
   return cv::VideoWriter(editedVideoPath.toStdString(), static_cast<int>(fourcc), fps,
                          cv::Size(static_cast<int>(width), static_cast<int>(height)));
-}
-
-QImage VideoThread::cvMatToQImage(const cv::Mat& mat) const
-{
-  return QImage(static_cast<uchar*>(mat.data), mat.cols, mat.rows, static_cast<int>(mat.step), QImage::Format_RGB888);
-}
-
-cv::Mat VideoThread::qImageToCvMat(const QImage& image) const
-{
-  return cv::Mat(image.height(), image.width(), CV_8UC3, (uchar*)image.bits(),
-                 static_cast<ulong>(image.bytesPerLine()));
 }
 
 void VideoThread::paintOverlays(int frameIndex, QImage& image)

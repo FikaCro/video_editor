@@ -25,8 +25,6 @@ public:
 private:
   void removeFileAndAbort();
   cv::VideoWriter createVideoWriter() const;
-  QImage cvMatToQImage(const cv::Mat& mat) const;
-  cv::Mat qImageToCvMat(const QImage& image) const;
   void paintOverlays(int frameIndex, QImage& image);
 
   QString editedVideoPath;
