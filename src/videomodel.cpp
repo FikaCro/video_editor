@@ -1,5 +1,7 @@
 #include "include/videomodel.h"
 
+#include <QFile>
+
 VideoModel::VideoModel(QObject* parent) : QAbstractListModel(parent) {}
 
 QVariant VideoModel::data(const QModelIndex& index, int role) const
@@ -15,7 +17,12 @@ QVariant VideoModel::data(const QModelIndex& index, int role) const
   switch (role)
   {
   case PathRole:
-    return QVariant(videos.at(index.row()).path);
+    if (isValid(index.row()))
+    {
+      return QVariant(videos.at(index.row()).path);
+    }
+    const_cast<VideoModel*>(this)->removeVideo(index.row());
+    return QVariant();
   case ThumbnailRole:
     return QVariant(videos.at(index.row()).thumbnail);
   default:
@@ -63,10 +70,9 @@ void VideoModel::addVideo(QString path)
   Video video;
   if (!path.startsWith("file://"))
   {
-    path.insert(0, "file://");
+    path = path.insert(0, "file://");
   }
   video.path = path;
-  // TODO: add thumbnail setup
   addVideo(video);
 }
 
@@ -77,5 +83,22 @@ void VideoModel::addVideo(const Video& video)
   videos.push_back(std::move(video));
 
   endInsertRows();
+  emit dataChanged(QModelIndex(), QModelIndex());
+}
+
+bool VideoModel::isValid(int index) const
+{
+  auto path = videos[index].path;
+  return QFile::exists(path.remove("file://"));
+}
+
+void VideoModel::removeVideo(int index)
+{
+  beginRemoveRows(QModelIndex(), index, index);
+
+  videos.removeAt(index);
+
+  endRemoveRows();
+
   emit dataChanged(QModelIndex(), QModelIndex());
 }

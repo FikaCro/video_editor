@@ -1,6 +1,5 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.12
-import QtQuick.Controls.Material 2.12
 
 Item {
     id: root
@@ -8,11 +7,7 @@ Item {
     signal showRaw()
     signal showEdited()
 
-    anchors.fill: parent
-
     Button {
-        id: button_raw
-
         width: parent.width / 3.0
         height: parent.height / 3.0
 
@@ -37,8 +32,6 @@ Item {
     }
 
     Button {
-        id: button_edited
-
         width: parent.width / 3.0
         height: parent.height / 3.0
 

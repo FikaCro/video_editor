@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.12
 
 import OverlayEffects 1.0
 
+// Self destructing on calling close()
 Popup {
     id: root
 
@@ -86,12 +87,12 @@ Popup {
                 {
                     overlays.push([sliderOverlay.overlayType, sliderOverlay.timeMiliseconds, sliderOverlay.xPercentage, sliderOverlay.yPercentage])
                 }
-                root.close()
 
                 if (overlays.length !== 0)
                 {
                     root.overlaysApplyTriggered(overlays)
                 }
+                root.close()
             }
         }
 
@@ -103,4 +104,6 @@ Popup {
             onClicked: root.close()
         }
     }
+
+    onClosed: destroy(10000);
 }

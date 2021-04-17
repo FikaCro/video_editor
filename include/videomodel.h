@@ -32,13 +32,14 @@ public:
 
   bool getEditable() const;
   void setEditable(bool value);
-
   Q_INVOKABLE QString getPath(int index);
-
   Q_INVOKABLE void addVideo(QString path);
-  void addVideo(const Video& video);
 
 private:
+  void addVideo(const Video& video);
+  bool isValid(int index) const;
+  void removeVideo(int index);
+
   QList<Video> videos;
   bool editable{false};
 

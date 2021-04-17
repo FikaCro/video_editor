@@ -11,8 +11,8 @@ ApplicationWindow {
     width: 1200
     height: 780
 
-    minimumWidth: 600
-    minimumHeight: 390
+    minimumWidth: 700
+    minimumHeight: 700
 
     visible: true
     visibility: "Maximized"
@@ -30,13 +30,17 @@ ApplicationWindow {
     MainView {
         id: mainView
 
+        anchors.fill: parent
+
         visible: viewIndex.index == -1
 
         onShowRaw: viewIndex.index = 0
         onShowEdited: viewIndex.index = 1
     }
-    VideoPreview {
-        id: videoPreviewRaw
+    VideoView {
+        id: videoViewRaw
+
+        anchors.fill: parent
 
         visible: viewIndex.index == 0
 
@@ -46,15 +50,16 @@ ApplicationWindow {
 
         onBackTriggered: viewIndex.index = -1
         onLoadVideoTriggered: videoDialog.open()
-        onVideoEdited: videoPreviewEdited.model.addVideo(path)
+        onVideoEditingFinished: videoViewEdited.model.addVideo(path)
     }
-    VideoPreview {
-        id: videoPreviewEdited
+    VideoView {
+        id: videoViewEdited
+
+        anchors.fill: parent
 
         visible: viewIndex.index == 1
 
-        model: VideoModel
-        {
+        model: VideoModel {
             editable: false
         }
 
@@ -66,11 +71,10 @@ ApplicationWindow {
 
         title: "Load video"
         folder: shortcuts.home
-        nameFilters: [ "Videos (*.avi *.mp4 *.mkv)" ]
+        nameFilters: [ "Videos (*.avi *.mov *.mp4 *.mkv)" ]
         defaultSuffix: ".mp4"
         selectExisting: true
 
-        onAccepted: videoPreviewRaw.model.addVideo(videoDialog.fileUrl.toString())
+        onAccepted: videoViewRaw.model.addVideo(videoDialog.fileUrl.toString())
     }
-
 }

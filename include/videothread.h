@@ -19,9 +19,8 @@ public:
   Q_INVOKABLE void setVideoPath(QString value);
   Q_INVOKABLE void setOverlay(const OverlayEffects::Type& type, int changeTimeMiliseconds, double xPercentage,
                               double yPercentage);
-
-  void run() Q_DECL_OVERRIDE;
   Q_INVOKABLE void abort();
+  void run() Q_DECL_OVERRIDE;
 
 private:
   void removeFileAndAbort();
@@ -37,7 +36,7 @@ private:
 
 signals:
   void videoEditingAborted();
-  void videoEditingProcessed(double value);
+  void videoEditingProcessed(int percentage);
   void videoEditingFinished(const QString& path);
 };
 

@@ -26,7 +26,7 @@ void OverlayNumber::paint(int frameIndex, QImage& image)
   painter.setPen(pen);
   painter.setFont(font);
 
-  painter.drawText(QPointF(std::max(10., pointPercentage.x() / 100.0 * image.width()),
-                           std::max(10., pointPercentage.y() / 100.0 * image.height())),
+  painter.drawText(QPointF(std::max(font.pointSizeF(), pointPercentage.x() / 100.0 * image.width()),
+                           std::max(font.pointSizeF(), pointPercentage.y() / 100.0 * image.height())),
                    QString::number(number));
 }

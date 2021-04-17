@@ -9,13 +9,11 @@ import VideoThread 1.0
 Item {
     id: root
 
-    anchors.fill: parent
+    property variant model: model
 
     signal backTriggered()
     signal loadVideoTriggered()
-    signal videoEdited(string path)
-
-    property variant model: model
+    signal videoEditingFinished(string path)
 
     PathView {
         id: pathView
@@ -31,8 +29,6 @@ Item {
         model: root.model
 
         delegate: Rectangle {
-            id: item
-
             height: parent.height * 0.5
             width: parent.width * 0.25
 
@@ -67,15 +63,24 @@ Item {
                     font.pointSize: 72
                     fontSizeMode: Text.Fit
 
-                    function fileName(str)
+                    function fileName(path)
                     {
-                        return (str.slice(str.lastIndexOf("/")+1))
+                        return path.slice(path.lastIndexOf("/")+1);
                     }
                 }
                 MouseArea {
                     anchors.fill: parent
 
-                    onClicked: video.startPlaying(path)
+                    onClicked: {
+                        if (path && path.length !== 0) {
+                            var video = videoFactory.createObject(root, {source: path, visible: true});
+                            video.play();
+
+                            video.stopped.connect(function(){
+                                video.destroy();
+                            });
+                        }
+                    }
                 }
             }
 
@@ -165,44 +170,32 @@ Item {
         onClicked: loadVideoTriggered()
     }
 
-    Video {
-        id: video
-        visible: false
+    Component {
+        id: videoFactory
 
-        anchors.fill: parent
+        Video {
+            id: video
 
-        fillMode: VideoOutput.Stretch
-
-        muted: true
-
-        MouseArea {
             anchors.fill: parent
 
-            onClicked: {
-                video.stopPlaying();
+            fillMode: VideoOutput.Stretch
+
+            muted: true
+
+            MouseArea {
+                anchors.fill: parent
+
+                onClicked: video.stop();
             }
-        }
-        onStopped: video.stopPlaying();
-
-        Keys.onEscapePressed: {
-            video.stopPlaying();
-            event.accepted = true;
-        }
-
-        function startPlaying(path) {
-            video.source = path;
-            video.visible = true;
-            video.play();
-            video.z = 999;
-        }
-        function stopPlaying() {
-            video.stop();
-            video.source = "";
-            video.visible = false;
-            video.z = -1;
         }
     }
 
+    Component {
+        id: videoThreadFactory
+
+        VideoThread {
+        }
+    }
 
     Component {
         id: popupOverlaysFactory
@@ -211,7 +204,8 @@ Item {
             onOverlaysApplyTriggered:
             {
                 var videoThread = videoThreadFactory.createObject(root, {});
-                videoThread.setVideoPath(root.model.getPath(pathView.currentIndex))
+
+                videoThread.setVideoPath(root.model.getPath(pathView.currentIndex));
                 for (let i=0; i <overlays.length; ++i)
                 {
                     videoThread.setOverlay(overlays[i][0], overlays[i][1], overlays[i][2], overlays[i][3]);
@@ -229,7 +223,7 @@ Item {
                     popupProgress.close();
                 });
                 videoThread.videoEditingFinished.connect(function(arg){
-                    root.videoEdited(arg);
+                    root.videoEditingFinished(arg);
                     videoThread.destroy();
                     popupProgress.close();
                 });
@@ -243,55 +237,16 @@ Item {
     }
 
     Component {
-        id: videoThreadFactory
-
-        VideoThread {
-        }
-    }
-
-    Component {
         id: popupProgressFactory
 
-        Popup {
-            id: popupProgress
+        AbortableProgressPopup {
+            x: parent.width * 0.4
+            y: parent.height * 0.4
+            width: parent.width * 0.2
+            height: parent.height * 0.2
 
-            signal abortTriggered()
-
-            x: root.width * 0.4
-            y: root.height * 0.4
-            width: root.width * 0.2
-            height: root.height * 0.2
-
-            property real progress: 0
-
-            closePolicy: Popup.NoAutoClose
-
-            ProgressBar {
-                id: progressBar
-
-                width: parent.width
-                height: parent.height / 2
-
-                anchors.top: parent.top
-
-                from: 0
-                to: 1
-                value: popupProgress.progress
-            }
-            Button {
-                text: "Cancel"
-
-                width: parent.width / 2
-                height: parent.height / 4
-
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.bottom: parent.bottom
-
-                onClicked: popupProgress.abortTriggered()
-            }
-
-            onOpened: root.enabled = false;
-            onClosed: root.enabled = true;
+            onOpened: parent.enabled = false;
+            onClosed: parent.enabled = true;
         }
     }
 }

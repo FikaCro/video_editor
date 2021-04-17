@@ -24,13 +24,18 @@ void VideoThread::setVideoPath(QString value)
 void VideoThread::setOverlay(const OverlayEffects::Type& type, int changeTimeMiliseconds, double xPercentage,
                              double yPercentage)
 {
-  overlays.push_back(OverlayFactory::overlay(type, static_cast<int>(videoCapture.get(cv::CAP_PROP_FPS)),
-                                             changeTimeMiliseconds, QPointF(xPercentage, yPercentage)));
+  if (auto overlay = OverlayFactory::overlay(type, static_cast<int>(videoCapture.get(cv::CAP_PROP_FPS)),
+                                             changeTimeMiliseconds, QPointF(xPercentage, yPercentage)))
+  {
+    overlays.push_back(overlay);
+  }
 }
+
+void VideoThread::abort() { abortCalled = true; }
 
 void VideoThread::run()
 {
-  if (!videoCapture.isOpened())
+  if (!videoCapture.isOpened() || overlays.empty())
   {
     emit videoEditingAborted();
     return;
@@ -53,7 +58,8 @@ void VideoThread::run()
     paintOverlays(frameIndex, image);
     videoWriter.write(qImageToCvMat(image));
 
-    emit videoEditingProcessed(static_cast<double>(frameIndex) / static_cast<double>(frameCount));
+    emit videoEditingProcessed(
+        static_cast<int>(static_cast<double>(frameIndex) / static_cast<double>(frameCount) * 100.0));
     frameIndex++;
 
     if (frameIndex == frameCount)
@@ -64,8 +70,6 @@ void VideoThread::run()
 
   emit videoEditingFinished(editedVideoPath);
 }
-
-void VideoThread::abort() { abortCalled = true; }
 
 void VideoThread::removeFileAndAbort()
 {
@@ -87,16 +91,13 @@ cv::VideoWriter VideoThread::createVideoWriter() const
 
 QImage VideoThread::cvMatToQImage(const cv::Mat& mat) const
 {
-  cv::Mat tmp;
-  cv::cvtColor(mat, tmp, CV_BGR2RGB);
   return QImage(static_cast<uchar*>(mat.data), mat.cols, mat.rows, static_cast<int>(mat.step), QImage::Format_RGB888);
 }
 
 cv::Mat VideoThread::qImageToCvMat(const QImage& image) const
 {
-  cv::Mat res(image.height(), image.width(), CV_8UC3, (uchar*)image.bits(), static_cast<ulong>(image.bytesPerLine()));
-  cv::cvtColor(res, res, CV_BGR2RGB);
-  return res;
+  return cv::Mat(image.height(), image.width(), CV_8UC3, (uchar*)image.bits(),
+                 static_cast<ulong>(image.bytesPerLine()));
 }
 
 void VideoThread::paintOverlays(int frameIndex, QImage& image)

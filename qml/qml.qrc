@@ -3,9 +3,10 @@
         <file>main.qml</file>
         <file>qtquickcontrols2.conf</file>
         <file>MainView.qml</file>
-        <file>VideoPreview.qml</file>
+        <file>VideoView.qml</file>
         <file>VideoOverlaysPopup.qml</file>
         <file>PositionSpiboxes.qml</file>
         <file>VideoOverlayItem.qml</file>
+        <file>AbortableProgressPopup.qml</file>
     </qresource>
 </RCC>

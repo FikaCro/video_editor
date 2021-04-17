@@ -14,14 +14,18 @@ void OverlaySlider::paint(int frameIndex, QImage& image)
 {
   Q_UNUSED(frameIndex)
 
+  const double rectDimensionScale{0.2};
+
   QStyleOptionSlider opt;
   opt.minimum = 0;
   opt.maximum = changeFps / 2;
-  opt.sliderValue = number + increment * 1;
-  opt.sliderPosition = number + increment * 1;
-  opt.rect = QRect(QPoint(static_cast<int>(pointPercentage.x() / 100.0 * image.width()),
-                          static_cast<int>(pointPercentage.y() / 100.0 * image.height())),
-                   QSize(static_cast<int>(image.width() * 0.2), static_cast<int>(image.width() * 0.2)));
+  opt.sliderValue = number + increment;
+  opt.sliderPosition = number + increment;
+  opt.rect =
+      QRect(QPoint(static_cast<int>(std::min(pointPercentage.x() / 100., 1. - rectDimensionScale) * image.width()),
+                   static_cast<int>(std::min(pointPercentage.y() / 100., 1. - rectDimensionScale) * image.height())),
+            QSize(static_cast<int>(image.width() * rectDimensionScale),
+                  static_cast<int>(image.width() * rectDimensionScale)));
 
   QSlider slider;
   slider.setMinimum(opt.minimum);

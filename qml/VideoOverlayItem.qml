@@ -12,9 +12,6 @@ Item {
     readonly property int yPercentage: positionSpinBoxes.yPercentage
     readonly property bool applied: applyCheckBox.checked
 
-    width: parent.width
-    height: parent.height
-
     PositionSpiboxes {
         id: positionSpinBoxes
 
