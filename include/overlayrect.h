@@ -8,8 +8,8 @@
 /*!
  * \brief The OverlayRect class
  *
- * The rectangle overlay class used for painting the rectangle at random generated position with random gradient color
- * Position and gradient change with the desired change time
+ * The rectangle overlay class used for painting the rectangle using gradient with random colors and positions
+ * Gradient positions and colors change with the desired change time
  */
 class OverlayRect : public OverlayBase
 {

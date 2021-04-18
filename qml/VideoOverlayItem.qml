@@ -108,20 +108,21 @@ Item {
         Rectangle {
             id: rectangleShape
 
+            x: positionSpinBoxes.xPercentage / 100.0 * (overlayRectangle.width - width) // positions defiend as percentages
+            y: positionSpinBoxes.yPercentage / 100.0 * (overlayRectangle.height - height)
             width: overlayRectangle.width * 0.1 // rectangle size as 10 % of frame width/height
             height: overlayRectangle.height * 0.1
 
-            property real colorStart: 0 // property for gradient start hue value
-            property real colorEnd: 1 // property for gradient end hue value
-
             gradient: Gradient { // two color gradient
                 GradientStop {
+                    id: gradientStart
                     position: 0.0
-                    color: Qt.hsla(rectangleShape.colorStart, 1, 0.5, 1)
+                    color: Qt.hsla(0, 1, 0.5, 1)
                 }
                 GradientStop {
+                    id: gradientEnd
                     position: 1.0
-                    color: Qt.hsla(rectangleShape.colorEnd, 1, 0.5, 1)
+                    color: Qt.hsla(1, 1, 0.5, 1)
                 }
             }
 
@@ -131,12 +132,12 @@ Item {
                 repeat: true
 
                 onTriggered: {
-                    // change rectangle position over the time but keeping it inside the frame dimensions
-                    rectangleShape.x = Math.floor(Math.random() * 100) / 100 * (overlayRectangle.width - rectangleShape.width);
-                    rectangleShape.y = Math.floor(Math.random() * 100) / 100 * (overlayRectangle.height - rectangleShape.height);
-                    // change rectangle gradient color (its hue value!) over the time
-                    rectangleShape.colorStart = Math.floor(Math.random() * 100) / 100;
-                    rectangleShape.colorEnd = Math.floor(Math.random() * 100) / 100;
+                    // change gradient positions over the time
+                    gradientStart.position = Math.floor(Math.random() * 100) / 100;
+                    gradientEnd.position = Math.floor(Math.random() * 100) / 100;
+                    // change gradient color (its hue and lightness values!) over the time
+                    gradientStart.color = Qt.hsla(Math.floor(Math.random() * 100) / 100, 1, Math.floor(Math.random() * 100) / 100, 1);
+                    gradientEnd.color = Qt.hsla(Math.floor(Math.random() * 100) / 100, 1, Math.floor(Math.random() * 100) / 100, 1);
                 }
             }
         }
@@ -148,8 +149,6 @@ Item {
         Slider {
             id: slider
 
-            enabled: false
-
             width: overlayRectangle.width / 3
 
             x: positionSpinBoxes.xPercentage / 100.0 * (overlayRectangle.width - width)
@@ -157,6 +156,10 @@ Item {
 
             from: 0
             to: 1
+
+            MouseArea {
+                anchors.fill: parent
+            }
 
             Timer {
                 interval: 1
