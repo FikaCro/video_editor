@@ -2,12 +2,14 @@
 
 #include <QPainter>
 
-ThumbnailItem::ThumbnailItem(QQuickItem* parent) : QQuickPaintedItem(parent) {
-    connect(this, &ThumbnailItem::widthChanged, this, [this](){update(); });
+ThumbnailItem::ThumbnailItem(QQuickItem* parent) : QQuickPaintedItem(parent)
+{
+  connect(this, &ThumbnailItem::widthChanged, this, [this]() { update(); });
 }
 
 void ThumbnailItem::setThumbnail(const QImage& thumbnail)
 {
+  // update current thumbnail with the provided one and call the repaint
   this->thumbnail = thumbnail.copy();
   update();
 }

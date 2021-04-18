@@ -4,11 +4,11 @@ import QtQuick.Controls 2.12
 Popup {
     id: root
 
-    property real progress: 0
+    property real progress: 0 // property used for updating progress bar
 
-    signal abortTriggered()
+    signal abortTriggered() // signal triggered on abort button clicked
 
-    closePolicy: Popup.NoAutoClose
+    closePolicy: Popup.NoAutoClose // popup can only be closed by pressing the cancel button
 
     Label {
         id: labelProgress

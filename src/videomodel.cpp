@@ -7,11 +7,8 @@ VideoModel::VideoModel(QObject* parent) : QAbstractListModel(parent) {}
 
 QVariant VideoModel::data(const QModelIndex& index, int role) const
 {
-  if (!index.isValid())
-  {
-    return QVariant();
-  }
-  if (index.row() < 0 || index.row() >= videos.size())
+  // return undefined data if invalid index
+  if (!index.isValid() || index.row() < 0 || index.row() >= videos.size())
   {
     return QVariant();
   }
@@ -20,14 +17,14 @@ QVariant VideoModel::data(const QModelIndex& index, int role) const
   case PathRole:
     if (isValid(index.row()))
     {
-      return QVariant(videos.at(index.row()).path);
+      return QVariant(videos.at(index.row()).path); // return video path if the video exists
     }
-    const_cast<VideoModel*>(this)->removeVideo(index.row());
-    return QVariant();
+    const_cast<VideoModel*>(this)->removeVideo(index.row()); // remove video from the model if path invalid
+    return QVariant(); // return undefined data if video does not exist at the path
   case ThumbnailRole:
-    return QVariant(videos.at(index.row()).thumbnail);
+    return QVariant(videos.at(index.row()).thumbnail); // return video thumbnail
   default:
-    return QVariant();
+    return QVariant(); // return undefined data if invalid role
   }
 }
 
@@ -36,7 +33,7 @@ bool VideoModel::setData(const QModelIndex& index, const QVariant& value, int ro
   Q_UNUSED(index)
   Q_UNUSED(value)
   Q_UNUSED(role)
-  return false;
+  return false; // not supported
 }
 
 QHash<int, QByteArray> VideoModel::roleNames() const
@@ -44,13 +41,13 @@ QHash<int, QByteArray> VideoModel::roleNames() const
   QHash<int, QByteArray> roles;
   roles[PathRole] = "path";
   roles[ThumbnailRole] = "thumbnail";
-  return roles;
+  return roles; // supported properties
 }
 
 int VideoModel::rowCount(const QModelIndex& parent) const
 {
   Q_UNUSED(parent)
-  return videos.size();
+  return videos.size(); // model size
 }
 
 bool VideoModel::getEditable() const { return editable; }
@@ -63,7 +60,7 @@ QString VideoModel::getPath(int index) const
   {
     return QString();
   }
-  return videos[index].path;
+  return videos[index].path; // path to the video or empty string if index invalid
 }
 
 QImage VideoModel::getThumbnail(int index) const
@@ -77,6 +74,7 @@ QImage VideoModel::getThumbnail(int index) const
 
 void VideoModel::addVideo(QString path)
 {
+  // create video object with its path and thumbnail and save it to the model
   Video video;
   if (!path.startsWith("file://"))
   {
@@ -90,6 +88,7 @@ void VideoModel::addVideo(QString path)
 
 void VideoModel::addVideo(const Video& video)
 {
+  // add video to the model and call functions used for updating the view
   beginInsertRows(QModelIndex(), videos.size(), videos.size());
 
   videos.push_back(std::move(video));
@@ -100,12 +99,18 @@ void VideoModel::addVideo(const Video& video)
 
 bool VideoModel::isValid(int index) const
 {
+  // check video validity (file existence)
   auto path = videos[index].path;
   return QFile::exists(path.remove("file://"));
 }
 
 void VideoModel::removeVideo(int index)
 {
+  if (index < 0 || index >= videos.size())
+  {
+    return;
+  }
+  // remove video from the model if its validity has changed and call functions used for updating the view
   beginRemoveRows(QModelIndex(), index, index);
 
   videos.removeAt(index);

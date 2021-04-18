@@ -4,8 +4,8 @@ import QtQuick.Controls 2.12
 Item {
     id: root
 
-    signal showRaw()
-    signal showEdited()
+    signal showRaw() // emitted whan raw button is clicked
+    signal showEdited() // emitted when edited button is clicked
 
     Button {
         width: parent.width / 3.0

@@ -10,13 +10,13 @@ import VideoThread 1.0
 Item {
     id: root
 
-    property variant model: model
+    property variant model // model property (must be VideoModel)
 
-    signal backTriggered()
-    signal loadVideoTriggered()
-    signal videoEditingFinished(string path)
+    signal backTriggered() // signal emitted when back button is clicked
+    signal loadVideoTriggered() // signal emitted when load button is clicked (visible only for editable model)
+    signal videoEditingFinished(string path) // signal emitted when video editing finished (possible only for editable model)
 
-    PathView {
+    PathView { // browsing videos using PathView sliding
         id: pathView
 
         anchors.fill: parent
@@ -49,7 +49,7 @@ Item {
                 border.color: "black"
                 border.width: 1
 
-                ThumbnailItem {
+                ThumbnailItem { // each item showing its video thumbnail
                     width: parent.width
                     height: parent.height * 0.8
 
@@ -58,7 +58,7 @@ Item {
                     thumbnail: pathView.model.getThumbnail(index)
                 }
 
-                Label {
+                Label { // each item showing its video file name
                     text: fileName(path)
 
                     width: parent.width * 0.8
@@ -81,7 +81,7 @@ Item {
                         return path.slice(path.lastIndexOf("/")+1);
                     }
                 }
-                MouseArea {
+                MouseArea { // play video on clicking the thumbnail
                     anchors.fill: parent
 
                     onClicked: {
@@ -97,7 +97,7 @@ Item {
                 }
             }
 
-            Button {
+            Button { // if model is editable, button for editing is visible, clicking it opens a editing popup
                 visible: pathView.model.editable && pathView.currentIndex == index
 
                 Label {
@@ -183,7 +183,7 @@ Item {
         onClicked: loadVideoTriggered()
     }
 
-    Component {
+    Component { // used for creating video player, playing it full screen and closing it on clicking anywhere
         id: videoFactory
 
         Video {
@@ -203,34 +203,39 @@ Item {
         }
     }
 
-    Component {
+    Component { // used for creating the editing thread
         id: videoThreadFactory
 
         VideoThread {
         }
     }
 
-    Component {
+    Component { // used for creating the overlay popup
         id: popupOverlaysFactory
 
         VideoOverlaysPopup {
             onOverlaysApplyTriggered:
             {
+                // create video thread object
                 var videoThread = videoThreadFactory.createObject(root, {});
 
+                // set video thread video path and overlays before starting the thread
                 videoThread.setVideoPath(root.model.getPath(pathView.currentIndex));
                 for (let i=0; i <overlays.length; ++i)
                 {
                     videoThread.setOverlay(overlays[i][0], overlays[i][1], overlays[i][2], overlays[i][3]);
                 }
 
+                // create and open popup progress
                 var popupProgress = popupProgressFactory.createObject(root, {});
                 popupProgress.open();
 
+                // abort thread executing on clicking the abort button
                 popupProgress.abortTriggered.connect(function(){
                     videoThread.abort();
                 });
 
+                // destroy thread and close popup on editing finish/abort and emit video editing finished signal if finished cleanly
                 videoThread.videoEditingAborted.connect(function(){
                     videoThread.destroy();
                     popupProgress.close();
@@ -240,13 +245,16 @@ Item {
                     popupProgress.close();
                     root.videoEditingFinished(arg);
                 });
+                // update progress bar while executing thread
                 videoThread.videoEditingProcessed.connect(function(arg){
                     popupProgress.progress = arg;
                 })
 
+                // start thread execution
                 videoThread.start();
             }
 
+            // disable main view while popup opened and reanable on close
             onOpened: parent.enabled = false;
             onClosed:
             {
@@ -265,6 +273,7 @@ Item {
             width: parent.width * 0.2
             height: parent.height * 0.2
 
+            // disable main view while popup opened and reanable on close
             onOpened: parent.enabled = false;
             onClosed:
             {

@@ -7,9 +7,9 @@ import OverlayEffects 1.0
 Popup {
     id: root
 
-    signal overlaysApplyTriggered(variant overlays)
+    signal overlaysApplyTriggered(variant overlays) // signal emitted if apply button is clicked, argument is the vector of overlays with 4 arguments needed to create one
 
-    closePolicy: Popup.NoAutoClose
+    closePolicy: Popup.NoAutoClose // closed only on apply or close button
 
     x: (parent.width - width) / 2
     y: (parent.height - height) / 2
@@ -23,7 +23,7 @@ Popup {
         anchors.top: parent.top
         anchors.bottom: rowButtons.top
 
-        VideoOverlayItem {
+        VideoOverlayItem { // number overlay visualization and property selection
             id: numberOverlay
 
             width: parent.width / 3.
@@ -33,7 +33,7 @@ Popup {
             timeMiliseconds: 300
         }
 
-        VideoOverlayItem {
+        VideoOverlayItem { // rectangle overlay visualization and property selection
             id: rectangleOverlay
 
             width: parent.width / 3.
@@ -43,7 +43,7 @@ Popup {
             timeMiliseconds: 1000
         }
 
-        VideoOverlayItem {
+        VideoOverlayItem { // slider overlay visualization and property selection
             id: sliderOverlay
 
             width: parent.width / 3.
@@ -73,6 +73,7 @@ Popup {
 
             onClicked:
             {
+                // overlays as vector of each overlay containing the type, change time, position percantage x and y
                 var overlays = [];
                 if (numberOverlay.applied)
                 {
@@ -88,7 +89,7 @@ Popup {
                 }
                 root.close()
 
-                if (overlays.length !== 0)
+                if (overlays.length !== 0) // only if at leas one overlay is applied
                 {
                     root.overlaysApplyTriggered(overlays)
                 }

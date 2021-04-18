@@ -1,18 +1,19 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.12
+
 import OverlayEffects 1.0
 
 Item {
     id: root
 
-    property variant overlayType
-    property int timeMiliseconds
+    property variant overlayType // property defining overlay type as OverlayEffects enum
+    property int timeMiliseconds // property defining the change time in miliseconds
 
-    readonly property int xPercentage: positionSpinBoxes.xPercentage
-    readonly property int yPercentage: positionSpinBoxes.yPercentage
-    readonly property bool applied: applyCheckBox.checked
+    readonly property int xPercentage: positionSpinBoxes.xPercentage // property defining the desired overlay x position as percentage of frame width
+    readonly property int yPercentage: positionSpinBoxes.yPercentage // property defining the desired overlay y position as percentage of frame height
+    readonly property bool applied: applyCheckBox.checked // property defining if the overlay is selected
 
-    PositionSpiboxes {
+    PositionSpiboxes { // overlay position spinboxes
         id: positionSpinBoxes
 
         width: parent.width
@@ -40,7 +41,7 @@ Item {
 
             color: "transparent"
 
-            Loader {
+            Loader { // loader component based on the desired overlay effect
                 sourceComponent: {
                     if (overlayType === OverlayEffects.Number)
                     {
@@ -78,7 +79,7 @@ Item {
     }
 
     Component {
-        id: numberOverlay
+        id: numberOverlay // random changing number value with constant position overlay
 
         Item {
             Label {
@@ -86,8 +87,8 @@ Item {
 
                 text: "0"
 
-                x: positionSpinBoxes.xPercentage / 100.0 * (overlayRectangle.width - width)
-                y: positionSpinBoxes.yPercentage / 100.0 * (overlayRectangle.height - height)
+                x: positionSpinBoxes.xPercentage / 100.0 * (overlayRectangle.width - width) // position defiend as percentage of width
+                y: positionSpinBoxes.yPercentage / 100.0 * (overlayRectangle.height - height) // position defined as percentage of height
             }
             Timer {
                 interval: root.timeMiliseconds
@@ -95,25 +96,25 @@ Item {
                 repeat: true
 
                 onTriggered: {
-                    number.text = Math.floor(Math.random() * 100).toString();
+                    number.text = Math.floor(Math.random() * 100).toString(); // change number value with the desired time in miliseconds
                 }
             }
         }
     }
 
     Component {
-        id: rectangleOverlay
+        id: rectangleOverlay // random changing position and gradient rectangle overlay
 
         Rectangle {
             id: rectangleShape
 
-            width: overlayRectangle.width * 0.1
+            width: overlayRectangle.width * 0.1 // rectangle size as 10 % of frame width/height
             height: overlayRectangle.height * 0.1
 
-            property real colorStart: 0
-            property real colorEnd: 1
+            property real colorStart: 0 // property for gradient start hue value
+            property real colorEnd: 1 // property for gradient end hue value
 
-            gradient: Gradient {
+            gradient: Gradient { // two color gradient
                 GradientStop {
                     position: 0.0
                     color: Qt.hsla(rectangleShape.colorStart, 1, 0.5, 1)
@@ -130,8 +131,10 @@ Item {
                 repeat: true
 
                 onTriggered: {
+                    // change rectangle position over the time but keeping it inside the frame dimensions
                     rectangleShape.x = Math.floor(Math.random() * 100) / 100 * (overlayRectangle.width - rectangleShape.width);
                     rectangleShape.y = Math.floor(Math.random() * 100) / 100 * (overlayRectangle.height - rectangleShape.height);
+                    // change rectangle gradient color (its hue value!) over the time
                     rectangleShape.colorStart = Math.floor(Math.random() * 100) / 100;
                     rectangleShape.colorEnd = Math.floor(Math.random() * 100) / 100;
                 }
@@ -140,7 +143,7 @@ Item {
     }
 
     Component {
-        id: sliderOverlay
+        id: sliderOverlay // slider sliding from min to mix in a desired time at the desired position
 
         Slider {
             id: slider

@@ -6,11 +6,21 @@
 
 namespace Helper
 {
+/*!
+ * \brief Convert OpenCv Mat image to Qt QImage
+ * \param mat OpenCv image to be converted
+ * \return Converted QImage
+ */
 inline QImage cvMatToQImage(const cv::Mat& mat)
 {
   return QImage(static_cast<uchar*>(mat.data), mat.cols, mat.rows, static_cast<int>(mat.step), QImage::Format_BGR888);
 }
 
+/*!
+ * \brief Convert Qt QImage to OpenCv Mat image
+ * \param image Qt image to be converted
+ * \return Converted OpenCv Mat image
+ */
 inline cv::Mat qImageToCvMat(const QImage& image)
 {
 
@@ -18,6 +28,11 @@ inline cv::Mat qImageToCvMat(const QImage& image)
                  static_cast<ulong>(image.bytesPerLine()));
 }
 
+/*!
+ * \brief Create video thumbnail image based on provided video path
+ * \param videoPath Path to video file, must stard with "file://"
+ * \return Video thumbnail image or null image if any error occured
+ */
 inline QImage videoThumbnail(const QString& videoPath)
 {
   cv::VideoCapture videoCapture(videoPath.toStdString());

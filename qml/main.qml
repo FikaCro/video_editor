@@ -11,20 +11,20 @@ ApplicationWindow {
     width: 1200
     height: 780
 
-    minimumWidth: 700
+    minimumWidth: 700 // minimum dimension for correct visualization of all elements
     minimumHeight: 700
 
     visible: true
     visibility: "Maximized"
 
-    Material.theme: Material.Dark
+    Material.theme: Material.Dark // apply material theme :)
     Material.accent: Material.Grey
 
     title: qsTr("Video browser and editor")
 
     Item {
         id: viewIndex
-        property int index: -1
+        property int index: -1 // private index used for selecting appropriate view (main (-1) or raw (0)/edited(1) video view)
     }
 
     MainView {
@@ -49,8 +49,8 @@ ApplicationWindow {
         }
 
         onBackTriggered: viewIndex.index = -1
-        onLoadVideoTriggered: videoDialog.open()
-        onVideoEditingFinished: videoViewEdited.model.addVideo(path)
+        onLoadVideoTriggered: videoDialog.open() // allow video loading from file
+        onVideoEditingFinished: videoViewEdited.model.addVideo(path) // add video to the edited model after editing finishes
     }
     VideoView {
         id: videoViewEdited
@@ -75,6 +75,6 @@ ApplicationWindow {
         defaultSuffix: ".mp4"
         selectExisting: true
 
-        onAccepted: videoViewRaw.model.addVideo(videoDialog.fileUrl.toString())
+        onAccepted: videoViewRaw.model.addVideo(videoDialog.fileUrl.toString()) // add video to the raw model after selecting file
     }
 }

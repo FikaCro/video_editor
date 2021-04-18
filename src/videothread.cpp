@@ -7,6 +7,7 @@ VideoThread::VideoThread(QObject* parent) : QThread(parent) {}
 
 VideoThread::~VideoThread()
 {
+  // stop thread execution in appropriate way
   abortCalled = true;
   quit();
   wait();
@@ -14,21 +15,32 @@ VideoThread::~VideoThread()
 
 void VideoThread::setVideoPath(QString value)
 {
-  value = value.remove("file://");
-  videoCapture = cv::VideoCapture(value.toStdString());
+  const QString fileString("file://");
+  if (!isRunning()) // must be set before running the thread
+  {
+    if (value.startsWith(fileString))
+    {
+      value = value.remove(0, fileString.length()); // remove file at the beginning of the string
+    }
+    videoCapture = cv::VideoCapture(value.toStdString()); // create video capture object
 
-  QFileInfo fileInfo(value);
-  editedVideoPath = fileInfo.absoluteFilePath().insert(
-      fileInfo.absoluteFilePath().length() - fileInfo.suffix().length() - 1, "_edited");
+    // define path to the new edited path as "$FILE_NAME"_edited."$FILE_EXTENSION"
+    QFileInfo fileInfo(value);
+    editedVideoPath = fileInfo.absoluteFilePath().insert(
+        fileInfo.absoluteFilePath().length() - fileInfo.suffix().length() - 1, "_edited");
+  }
 }
 
 void VideoThread::setOverlay(const OverlayEffects::Type& type, int changeTimeMiliseconds, double xPercentage,
                              double yPercentage)
 {
-  if (auto overlay = OverlayFactory::overlay(type, static_cast<int>(videoCapture.get(cv::CAP_PROP_FPS)),
-                                             changeTimeMiliseconds, QPointF(xPercentage, yPercentage)))
+  if (!isRunning())
   {
-    overlays.push_back(overlay);
+    if (auto overlay = OverlayFactory::overlay(type, static_cast<int>(videoCapture.get(cv::CAP_PROP_FPS)),
+                                               changeTimeMiliseconds, QPointF(xPercentage, yPercentage)))
+    {
+      overlays.push_back(overlay); // add overlay which will be burned to the video
+    }
   }
 }
 
@@ -39,7 +51,7 @@ void VideoThread::run()
   if (!videoCapture.isOpened() || overlays.empty())
   {
     emit videoEditingAborted();
-    return;
+    return; // stop thread execution if no overlays or if openning video failed
   }
 
   cv::VideoWriter videoWriter = createVideoWriter();
@@ -52,18 +64,19 @@ void VideoThread::run()
     if (!videoCapture.read(frame) || abortCalled)
     {
       removeFileAndAbort();
-      return;
+      return; // remove file and stop thread execution if reading video frame fails
     }
 
-    QImage image = Helper::cvMatToQImage(frame);
-    paintOverlays(frameIndex, image);
-    videoWriter.write(Helper::qImageToCvMat(image));
+    QImage image = Helper::cvMatToQImage(frame);     // convert current frame to the qimage
+    paintOverlays(frameIndex, image);                // paint overlays to the image
+    videoWriter.write(Helper::qImageToCvMat(image)); // convert qimage back to the opencv frame
 
+    // emit current video editing percentage
     emit videoEditingProcessed(
         static_cast<int>(static_cast<double>(frameIndex) / static_cast<double>(frameCount) * 100.0));
     frameIndex++;
 
-    if (frameIndex == frameCount)
+    if (frameIndex == frameCount) // stop editing on last frame
     {
       break;
     }
@@ -81,6 +94,7 @@ void VideoThread::removeFileAndAbort()
 
 cv::VideoWriter VideoThread::createVideoWriter() const
 {
+  // create new video writer based on the video which is being edited and its properties
   double fourcc = videoCapture.get(cv::CAP_PROP_FOURCC);
   double fps = videoCapture.get(cv::CAP_PROP_FPS);
   double width = videoCapture.get(cv::CAP_PROP_FRAME_WIDTH);
