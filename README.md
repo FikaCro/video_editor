@@ -23,8 +23,21 @@ User is also able to play video in any section by clicking on its thumbnail. Vid
 - OpenCV
 
 ## Build and usage
-- Clone the project ```https://github.com/FikaCro/video_editor.git```
-- Navigate inside the project ```cd video_editor```
+```
+git clone https://github.com/FikaCro/video_editor.git
+cd video_editor
+```
+
+### cmake (suggested)
+```
+mkdir build
+cd build
+cmake ..
+make
+```
+- Run application
+
+### qmake
 - Open project file ```video_editor.pro``` with the desired editor
 - Edit lines ```INCLUDEPATH``` and ```LIBS``` so the build is able to find [OpenCV](https://opencv.org/) library
 - Build project using ```qmake```
